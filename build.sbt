@@ -11,7 +11,8 @@ lazy val root = (project in file(".")).
     libraryDependencies ++= Seq(
       commonsIo,
       ffmpeg,
-      scalaTest % Test,
+      scalaArm,
+      scalatest % Test,
       typesafeConfig
     )
   )
