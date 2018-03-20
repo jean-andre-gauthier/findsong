@@ -9,8 +9,11 @@ lazy val root = (project in file(".")).
     )),
     name := "findsong",
     libraryDependencies ++= Seq(
+      breeze,
+      breezeNatives,
       commonsIo,
       ffmpeg,
+      rtree,
       scalaArm,
       scalatest % Test,
       typesafeConfig
