@@ -16,7 +16,7 @@ class Settings(config: Config) {
         val fanout = constellationMap.getInt("fanout")
         val peakDeltaF = constellationMap.getInt("peak-delta-f")
         val peakDeltaT = constellationMap.getInt("peak-delta-t")
-        val peaksPerChunk = constellationMap.getInt("peak-per-chunk")
+        val peaksPerChunk = constellationMap.getInt("peaks-per-chunk")
         val windowDeltaF = constellationMap.getInt("window-delta-f")
         val windowDeltaT = constellationMap.getInt("window-delta-t")
         val windowDeltaTi = constellationMap.getInt("window-delta-ti")

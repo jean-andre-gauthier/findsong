@@ -13,6 +13,7 @@ lazy val root = (project in file(".")).
       breezeNatives,
       commonsIo,
       ffmpeg,
+      logback,
       rtree,
       scalaArm,
       scalatest % Test,

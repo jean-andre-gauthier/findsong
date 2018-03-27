@@ -29,18 +29,25 @@ object Fingerprint {
                             peakEntry.geometry.x() + settings.ConstellationMap.windowDeltaT,
                             peakEntry.geometry.y() + settings.ConstellationMap.windowDeltaF
                         ))
-                        .take(settings.ConstellationMap.fanout)
                         .toBlocking()
                         .toIterable()
                         .asScala
-                        .map(otherPeakEntry => (peakEntry.value(), otherPeakEntry.value()))
+                        .toSeq
+                        .map(_.value())
+                        .sorted
+                        .take(settings.ConstellationMap.fanout)
+                        .map(otherPeak =>
+                                if (peakEntry.value().time <= otherPeak.time)
+                                    (peakEntry.value(), otherPeak)
+                                else
+                                    (otherPeak, peakEntry.value()))
                 )
             .toSeq
         peakPairs
     }
 
     def hannFunction(signals: DenseMatrix[Double]): DenseMatrix[Double] = {
-        signals :* (0.5 * cos(2.0 * Pi * signals / (signals.cols - 1.0)))
+        signals :* (0.5 * (1.0 - cos(2.0 * Pi * signals.mapPairs((rowColumn, _) => rowColumn._2.toDouble) / (signals.cols - 1.0))))
     }
 
     def peakPairsToSongIndex(peakPairs: PeakPairs, song: Song): SongIndex = {
@@ -76,37 +83,41 @@ object Fingerprint {
         )
         val spectrogram = windowedSignal(*,::).map(row => {
             val frequencies = fourierTr(row)
-            frequencies(0 until row.size / 2).map(_.abs.toInt)
+            frequencies(0 until row.size / 2).map(_.abs.round.toInt)
         })
         spectrogram
     }
 
     def spectrogramToConstellationMap(spectrogram: Spectrogram): ConstellationMap = {
-        val peaks = spectrogram
-            .pairs
-            .iterator
-            .toList
-            .flatMap((rowColumnToAmplitude: ((Int, Int), Int)) => {
-                val peak = Peak(
-                    rowColumnToAmplitude._2,
-                    rowColumnToAmplitude._1._2,
-                    rowColumnToAmplitude._1._1)
-                val peakDeltaF = settings.ConstellationMap.peakDeltaF
-                val rangeCols = scala.math.max(0, peak.frequency - peakDeltaF)
-                    .to(scala.math.min(spectrogram.cols, peak.frequency + peakDeltaF))
-                val peakDeltaT = settings.ConstellationMap.peakDeltaT
-                val rangeRows = scala.math.max(0, peak.time - peakDeltaT)
-                    .to(scala.math.min(spectrogram.rows, peak.time + peakDeltaT))
+        val indices = spectrogram
+            .mapPairs((rowColumn, _) => rowColumn)
+        val peaks = indices(*, ::)
+            .map(_
+                    .toArray
+                    .flatMap((rowColumn) => {
+                        val peak = Peak(
+                            spectrogram(rowColumn._1, rowColumn._2),
+                            rowColumn._2,
+                            rowColumn._1)
+                        val peakDeltaF = settings.ConstellationMap.peakDeltaF
+                        val rangeCols = scala.math.max(0, peak.frequency - peakDeltaF)
+                            .to(scala.math.min(spectrogram.cols-1, peak.frequency + peakDeltaF))
+                        val peakDeltaT = settings.ConstellationMap.peakDeltaT
+                        val rangeRows = scala.math.max(0, peak.time - peakDeltaT)
+                            .to(scala.math.min(spectrogram.rows-1, peak.time + peakDeltaT))
 
-                if (peak.amplitude == spectrogram(rangeRows, rangeCols).max)
-                    Some(peak)
-                else
-                    None
-        })
+                        if (peak.amplitude == spectrogram(rangeRows, rangeCols).max)
+                            Some(peak)
+                        else
+                            None
+                    })
+                )
+            .toArray
         val peaksAboveThreshold = peaks
-            .sortBy(-_.amplitude)
-            .slice(0, settings.ConstellationMap.peaksPerChunk)
+            .map(_.sorted.take(settings.ConstellationMap.peaksPerChunk))
         val constellationMap = peaksAboveThreshold
+            .flatten
+            .toArray
             .foldLeft(RTree.create[Peak, Point])((tree, peak) =>
                     tree.add(peak, Geometries.point(peak.time, peak.frequency)))
         constellationMap

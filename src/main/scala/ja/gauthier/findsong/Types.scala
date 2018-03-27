@@ -4,6 +4,7 @@ import breeze.linalg._
 import breeze.math._
 import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry.Point
+import scala.math._
 
 object Types {
     type ConstellationMap = RTree[Peak, Point]
@@ -11,7 +12,15 @@ object Types {
     type SongHash = Int
     type Spectrogram = DenseMatrix[Int]
 
-    case class Peak(amplitude: Double, frequency: Int, time: Int)
+    case class Peak(amplitude: Int, frequency: Int, time: Int) extends Ordered[Peak] {
+        def compare(that: Peak): Int =
+            Ordering.Tuple3[Int, Int, Int]
+                .compare(
+                    (-this.amplitude, this.time, this.frequency),
+                    (-that.amplitude, that.time, that.frequency)
+                )
+    }
+
     type PeakPairs = Seq[(Peak, Peak)]
 
     case class Song(
