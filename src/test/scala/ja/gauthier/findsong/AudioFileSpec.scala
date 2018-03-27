@@ -20,4 +20,11 @@ class AudioFileSpec extends FunSpec with Matchers {
       song.track shouldBe "1/10"
     }
   }
+
+  describe("extractFileSignal") {
+    it("should extract the song's audio signal") {
+      val signal = AudioFile.extractFileSignal(testFile)
+      signal.length shouldBe 225490
+    }
+  }
 }
