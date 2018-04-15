@@ -8,11 +8,11 @@ object Microphone extends AudioUtils {
     def extractMicrophoneSignal(nBytes: Int): Signal = {
         val format = getAudioFormat()
         val info = new DataLine.Info(classOf[TargetDataLine], format)
-        val signal = new Signal(settings.Preprocessing.bytesPerCapture)
+        val signal = new Signal(settings.Recording.bytesPerCapture)
         for (microphone <- managed(AudioSystem.getLine(info).asInstanceOf[TargetDataLine])) {
             microphone.open(format)
             microphone.start()
-            microphone.read(signal, 0, settings.Preprocessing.bytesPerCapture)
+            microphone.read(signal, 0, settings.Recording.bytesPerCapture)
         }
         signal
     }

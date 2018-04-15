@@ -10,7 +10,7 @@ import com.github.davidmoten.rtree.geometry._
 import scala.collection.JavaConverters._
 import Types._
 
-object Fingerprint {
+object Fingerprinter {
     val settings = Settings.settings
 
     def constellationMapToPeakPairs(constellationMap: ConstellationMap): PeakPairs = {
@@ -51,20 +51,28 @@ object Fingerprint {
     }
 
     def peakPairsToSongIndex(peakPairs: PeakPairs, song: Song): SongIndex = {
-        peakPairs
-            .foldLeft(Map.empty[SongIndexKey, Song])((songIndex, peakPair) =>
-                    songIndex +
-                        (SongIndexKey(
-                            peakPair._1.frequency,
-                            peakPair._2.frequency,
-                            peakPair._2.time - peakPair._1.time)
-                        -> song))
+        val songIndexUnsortedValues = peakPairs
+            .foldLeft(SongIndex())((songIndex, peakPair) => {
+                val key = SongIndexKey(
+                    peakPair._1.frequency,
+                    peakPair._2.frequency,
+                    peakPair._2.time - peakPair._1.time)
+                val values = songIndex.getOrElse(key, Seq.empty[SongIndexValue]) :+ SongIndexValue(peakPair._1.time, song)
+                songIndex + (key -> values)
+            })
+        val songIndexSortedValues = songIndexUnsortedValues.mapValues(_.sortBy(_.t1))
+        songIndexUnsortedValues
     }
 
-    def signalToSongIndex(signal: Signal, song: Song): SongIndex =  {
+    def signalToPeakPairs(signal: Signal): PeakPairs = {
         val spectrogram = signalToSpectrogram(signal)
         val constellationMap = spectrogramToConstellationMap(spectrogram)
         val peakPairs = constellationMapToPeakPairs(constellationMap)
+        peakPairs
+    }
+
+    def signalToSongIndex(signal: Signal, song: Song): SongIndex =  {
+        val peakPairs = signalToPeakPairs(signal)
         val songIndex = peakPairsToSongIndex(peakPairs, song)
         songIndex
     }
@@ -73,7 +81,7 @@ object Fingerprint {
         val windowedSignal: DenseMatrix[Double] = hannFunction(
                 DenseMatrix(
                     signal
-                    .map((n: Byte) => n.toDouble)
+                    .map(_.toDouble)
                     .sliding(
                         settings.Spectrogram.bytesPerChunk,
                         settings.Spectrogram.bytesPerChunkStep)

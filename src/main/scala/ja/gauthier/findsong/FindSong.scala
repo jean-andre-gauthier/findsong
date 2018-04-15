@@ -27,32 +27,32 @@ object FindSong extends App {
 
     Indexer.indexSongs(inputDirectory)
         .andThen {
-            case Success(songs) =>
+            case Success(songIndex) =>
                 println("Songs indexed")
-                recordLoop()
+                recordLoop(songIndex)
             case Failure(exception) =>
                 println("Failed to index songs: ")
                 exception.printStackTrace()
         }
 
-    def recordLoop(): Unit = {
-        val startRecordingMessage = "Press <Enter> to start recording"
-        println(startRecordingMessage)
+        def recordLoop(songIndex: SongIndex): Unit = {
+            val startRecordingMessage = "Press <Enter> to start recording"
+            println(startRecordingMessage)
 
-        Iterator
-            .continually(StdIn.readChar())
-            .zipWithIndex
-            .foreach((charIndex: (Char, Int)) => {
-                println("Recording...")
-                val index = charIndex._2
-                val microphoneSignalData = Microphone.extractMicrophoneSignal(settings.Preprocessing.bytesPerCapture)
-                val outFile = Paths.get(
-                    inputDirectory,
-                        s"microphone$index.${settings.Preprocessing.intermediateFormat}"
-                    ).toString
-                AudioFile.exportSignal(microphoneSignalData, outFile)
-                println("Recording complete")
-                println(startRecordingMessage)
-            })
+            Iterator
+                .continually(StdIn.readChar())
+                .zipWithIndex
+                .foreach((_: (Char, Int)) => {
+                    println("Recording...")
+                    val signal = Microphone.extractMicrophoneSignal(settings.Recording.bytesPerCapture)
+                    println("Recording complete")
+                    val matches = Matcher.signalToMatches(signal, songIndex)
+                    val matchesTable = matches.foldLeft("")((table, songMatch) =>
+                            table + (songMatch.confidence * 100)
+                                + "% - " + songMatch.song.title
+                                + " - " + songMatch.song.artist)
+                    println(matchesTable)
+                    println(startRecordingMessage)
+                })
     }
 }

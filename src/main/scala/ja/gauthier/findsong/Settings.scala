@@ -26,7 +26,6 @@ class Settings(config: Config) {
         val preprocessing = findsong.getConfig("preprocessing")
         val bigEndian = preprocessing.getBoolean("big-endian")
         val bitsPerSample = preprocessing.getInt("bits-per-sample")
-        val bytesPerCapture = preprocessing.getInt("bytes-per-capture")
         val channels = preprocessing.getInt("channels")
         val codec = preprocessing.getString("codec")
         val inputFormat = preprocessing.getString("input-format")
@@ -39,6 +38,11 @@ class Settings(config: Config) {
         val ffmpeg = findsong.getConfig("ffmpeg")
         val ffmpegPath = ffmpeg.getString("ffmpeg-path")
         val ffprobePath = ffmpeg.getString("ffprobe-path")
+    }
+
+    object Recording {
+        val recording = findsong.getConfig("recording")
+        val bytesPerCapture = recording.getInt("bytes-per-capture")
     }
 
     object Spectrogram {

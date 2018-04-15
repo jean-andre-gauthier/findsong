@@ -21,9 +21,9 @@ object Indexer {
                 blocking {
                     val signal = AudioFile.extractFileSignal(songFile.getCanonicalPath())
                     val song = AudioFile.extractSongMetadata(songFile.getCanonicalPath())
-                    val songIndexEntries = Fingerprint.signalToSongIndex(signal, song)
+                    val songIndexEntries = Fingerprinter.signalToSongIndex(signal, song)
                     songIndexEntries
                 }
-            }))(Map.empty[SongIndexKey, Song])((songIndex, songIndexEntries) => songIndex ++ songIndexEntries)
+            }))(SongIndex())((songIndex, songIndexEntries) => songIndex ++ songIndexEntries)
     }
 }
