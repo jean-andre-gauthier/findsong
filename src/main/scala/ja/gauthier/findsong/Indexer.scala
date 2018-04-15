@@ -24,6 +24,11 @@ object Indexer {
                     val songIndexEntries = Fingerprinter.signalToSongIndex(signal, song)
                     songIndexEntries
                 }
-            }))(SongIndex())((songIndex, songIndexEntries) => songIndex ++ songIndexEntries)
+            }))(Seq[SongIndex]())((songIndex, songIndexEntries) => songIndex :+ songIndexEntries)
+                .map((songIndexes) => combineSongIndexes(songIndexes))
+    }
+
+    def combineSongIndexes(songIndexes: Seq[SongIndex]): SongIndex = {
+        songIndexes.flatMap(_.toSeq).groupBy(_._1).mapValues(_.flatMap(_._2))
     }
 }
