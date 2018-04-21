@@ -1,5 +1,8 @@
 package ja.gauthier.findsong
 
+import ja.gauthier.findsong.types.settings._
+import ja.gauthier.findsong.types.signal._
+import ja.gauthier.findsong.types.song._
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
@@ -10,9 +13,10 @@ import net.bramp.ffmpeg._
 import net.bramp.ffmpeg.builder.FFmpegBuilder
 import org.apache.commons.io._
 import scala.io.Source
-import Types._
 
-object AudioFile extends AudioUtils {
+object AudioFile {
+    val settings = Settings.settings
+
     def exportSignal(data: Signal, name: String): Unit = {
         val outFile = new File(name)
         val format = getAudioFormat()
@@ -73,6 +77,16 @@ object AudioFile extends AudioUtils {
             metadata("genre"),
             metadata("title"),
             metadata("track")
+        )
+    }
+
+    def getAudioFormat(): AudioFormat = {
+        new AudioFormat(
+            settings.Preprocessing.sampleRate,
+            settings.Preprocessing.bitsPerSample,
+            settings.Preprocessing.channels,
+            settings.Preprocessing.signed,
+            settings.Preprocessing.bigEndian
         )
     }
 

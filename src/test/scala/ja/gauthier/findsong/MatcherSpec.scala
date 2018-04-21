@@ -3,7 +3,12 @@ package ja.gauthier.findsong
 import org.scalactic._
 import org.scalatest._
 import scala.collection.JavaConverters._
-import Types._
+import ja.gauthier.findsong.types.matchPackage._
+import ja.gauthier.findsong.types.peak._
+import ja.gauthier.findsong.types.song._
+import ja.gauthier.findsong.types.songConfidence._
+import ja.gauthier.findsong.types.songIndex._
+import ja.gauthier.findsong.types.songOffsets._
 
 class MatcherSpec extends FunSpec with Matchers {
 

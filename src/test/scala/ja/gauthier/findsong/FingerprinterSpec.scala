@@ -7,7 +7,11 @@ import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry._
 import org.scalatest._
 import scala.collection.JavaConverters._
-import Types._
+import ja.gauthier.findsong.types.constellationMap._
+import ja.gauthier.findsong.types.peak._
+import ja.gauthier.findsong.types.peakPairs._
+import ja.gauthier.findsong.types.song._
+import ja.gauthier.findsong.types.songIndex._
 
 class FingerprinterSpec extends FunSpec with Matchers {
 
@@ -147,6 +151,12 @@ class FingerprinterSpec extends FunSpec with Matchers {
       0 ,1, 0, -1, 0, 1, 0, -1
     )
 
+    val sine_6_length_17 = Array[Byte](
+      0 ,1, 0, -1, 0, 1, 0, -1,
+      0 ,1, 0, -1, 0, 1, 0, -1,
+      0
+    )
+    
     val sine_2_4_length_16 = Array[Byte](
       0, 17, 10, -3, 0, 3, -10, -17,
       0, 17, 10, -3, 0, 3, -10, -17
@@ -179,6 +189,13 @@ class FingerprinterSpec extends FunSpec with Matchers {
       spectrogram(0, ::).t.toArray should contain theSameElementsInOrderAs Seq( 1, 20, 38, 40, 38, 20,  1, 1)
       spectrogram(1, ::).t.toArray should contain theSameElementsInOrderAs Seq(22, 24, 24, 22, 24, 20, 11, 7)
       spectrogram(2, ::).t.toArray should contain theSameElementsInOrderAs Seq( 0,  0,  0,  2,  4,  2,  0, 0)
+    }
+
+    it("should discard data at the end of the signal if its size is not a multiple of bytes-per-chunk") {
+      val spectrogram = Fingerprinter.signalToSpectrogram(sine_6_length_17)
+      spectrogram.rows should be (1)
+      spectrogram.cols should be (8)
+      spectrogram(0, ::).t.toArray should contain theSameElementsInOrderAs Seq(0, 0, 0, 2, 4, 2, 0, 0)
     }
   }
 

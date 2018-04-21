@@ -5,10 +5,19 @@ import breeze.math._
 import breeze.numerics._
 import breeze.numerics.constants._
 import breeze.signal._
+import breeze.util._
 import com.github.davidmoten.rtree.RTree
 import com.github.davidmoten.rtree.geometry._
+import ja.gauthier.findsong.types.constellationMap._
+import ja.gauthier.findsong.types.peak._
+import ja.gauthier.findsong.types.peakPair._
+import ja.gauthier.findsong.types.peakPairs._
+import ja.gauthier.findsong.types.settings._
+import ja.gauthier.findsong.types.signal._
+import ja.gauthier.findsong.types.song._
+import ja.gauthier.findsong.types.songIndex._
+import ja.gauthier.findsong.types.spectrogram._
 import scala.collection.JavaConverters._
-import Types._
 
 object Fingerprinter {
     val settings = Settings.settings
@@ -61,34 +70,47 @@ object Fingerprinter {
                 songIndex + (key -> values)
             })
         val songIndexSortedValues = songIndexUnsortedValues.mapValues(_.sortBy(_.t1))
+        songIndexSortedValues.toFile("peak-pairs-to-song-index-song-index-" + song.title)
         songIndexUnsortedValues
     }
 
-    def signalToPeakPairs(signal: Signal): PeakPairs = {
+    def signalToPeakPairs(signal: Signal, song: Song): PeakPairs = {
+        signal.toFile("signal-to-peak-pairs-signal-" + song.title)
         val spectrogram = signalToSpectrogram(signal)
+        spectrogram.toFile("signal-to-peak-pairs-spectrogram-" + song.title)
         val constellationMap = spectrogramToConstellationMap(spectrogram)
+        constellationMap.toFile("signal-to-peak-pairs-constellation-map-" + song.title)
         val peakPairs = constellationMapToPeakPairs(constellationMap)
+        peakPairs.toFile("signal-to-peak-pairs-peak-pairs-" + song.title)
         peakPairs
     }
 
     def signalToSongIndex(signal: Signal, song: Song): SongIndex =  {
-        val peakPairs = signalToPeakPairs(signal)
+        val peakPairs = signalToPeakPairs(signal, song)
         val songIndex = peakPairsToSongIndex(peakPairs, song)
         songIndex
     }
 
     def signalToSpectrogram(signal: Signal): Spectrogram = {
-        val windowedSignal: DenseMatrix[Double] = hannFunction(
-                DenseMatrix(
-                    signal
-                    .map(_.toDouble)
-                    .sliding(
-                        settings.Spectrogram.bytesPerChunk,
-                        settings.Spectrogram.bytesPerChunkStep)
-                    .toList
-                    .map(_.toArray)
-                    :_*)
-        )
+        val raggedChunks = signal
+            .map(_.toDouble)
+            .sliding(
+                settings.Spectrogram.bytesPerChunk,
+                settings.Spectrogram.bytesPerChunkStep)
+            .toArray
+        val chunks = if (
+            raggedChunks.size > 0
+            && raggedChunks.last.size != settings.Spectrogram.bytesPerChunk) {
+            raggedChunks.init
+        } else {
+            raggedChunks
+        }
+        val chunksMatrix = if (chunks.size > 0) {
+            JavaArrayOps.array2DToDm(chunks)
+        } else {
+            new DenseMatrix[Double](0,0)
+        }
+        val windowedSignal = hannFunction(chunksMatrix)
         val spectrogram = windowedSignal(*,::).map(row => {
             val frequencies = fourierTr(row)
             frequencies(0 until row.size / 2).map(_.abs.round.toInt)

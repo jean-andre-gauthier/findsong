@@ -1,6 +1,15 @@
 package ja.gauthier.findsong
 
-import Types._
+import ja.gauthier.findsong.types.matchPackage._
+import ja.gauthier.findsong.types.matches._
+import ja.gauthier.findsong.types.peakPairs._
+import ja.gauthier.findsong.types.settings._
+import ja.gauthier.findsong.types.signal._
+import ja.gauthier.findsong.types.song._
+import ja.gauthier.findsong.types.songConfidence._
+import ja.gauthier.findsong.types.songIndex._
+import ja.gauthier.findsong.types.songOffsets._
+import java.time.LocalDateTime
 
 object Matcher {
     val settings = Settings.settings
@@ -28,10 +37,15 @@ object Matcher {
     }
 
     def signalToMatches(signal: Signal, songIndex: SongIndex): Matches = {
-        val peakPairs = Fingerprinter.signalToPeakPairs(signal)
+        signal.toFile("signal-to-matches-signal-microphone")
+        val peakPairs = Fingerprinter.signalToPeakPairs(signal, Song("", "", "", "", "microphone", ""))
+        peakPairs.toFile("signal-to-matches-peak-pairs-microphone")
         val songOffsets = peakPairsToSongOffsets(peakPairs, songIndex)
+        songOffsets.toFile("signal-to-matches-song-offsets-microphone")
         val songConfidence = songOffsetsToSongConfidence(songOffsets)
+        songConfidence.toFile("signal-to-matches-song-confidence-microphone")
         val matches = songConfidenceToMatches(songConfidence)
+        matches.toFile("signal-to-matches-matches-microphone")
         matches
     }
 

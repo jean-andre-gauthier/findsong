@@ -1,11 +1,12 @@
 package ja.gauthier.findsong
 
+import ja.gauthier.findsong.types.settings._
+import ja.gauthier.findsong.types.songIndex._
 import java.io.File
 import javax.sound.sampled._
 import org.apache.commons.io._
 import scala.concurrent._
 import scala.collection.JavaConverters._
-import Types._
 
 object Indexer {
     val settings = Settings.settings
@@ -16,14 +17,13 @@ object Indexer {
             .listFiles(directoryFile, Array(settings.Preprocessing.inputFormat), true)
             .asScala
             .toSeq
+            .to[collection.immutable.Seq]
         Future
-            .fold(songFiles.map((songFile: File) => Future {
-                blocking {
-                    val signal = AudioFile.extractFileSignal(songFile.getCanonicalPath())
-                    val song = AudioFile.extractSongMetadata(songFile.getCanonicalPath())
-                    val songIndexEntries = Fingerprinter.signalToSongIndex(signal, song)
-                    songIndexEntries
-                }
+            .foldLeft(songFiles.map((songFile: File) => Future {
+                val signal = AudioFile.extractFileSignal(songFile.getCanonicalPath())
+                val song = AudioFile.extractSongMetadata(songFile.getCanonicalPath())
+                val songIndexEntries = Fingerprinter.signalToSongIndex(signal, song)
+                songIndexEntries
             }))(Seq[SongIndex]())((songIndex, songIndexEntries) => songIndex :+ songIndexEntries)
                 .map((songIndexes) => combineSongIndexes(songIndexes))
     }
