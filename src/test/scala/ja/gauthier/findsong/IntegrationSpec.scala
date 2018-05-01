@@ -17,7 +17,7 @@ class IntegrationSpec extends FunSpec with Matchers {
 
   val song1 = Song(album, artist, disc, genre, "song 1", track)
 
-  val signalSong1 = Array[Byte](
+  val signalSong1 = Array[Short](
     0, 17, 10, -3, 0, 3, -10, -17,
     0, 17, 10, -3, 0, 3, -10, -17,
     0, 17, 10, -3, 0, 3, -10, -17,
@@ -32,7 +32,7 @@ class IntegrationSpec extends FunSpec with Matchers {
 
   val song2 = Song(album, artist, disc, genre, "song 2", track)
 
-  val signalSong2 = Array[Byte](
+  val signalSong2 = Array[Short](
     0, 17, 10, -3, 0, 3, -10, -17,
     0, 17, 10, -3, 0, 3, -10, -17,
     0, 17, 10, -3, 0, 3, -10, -17,
@@ -51,7 +51,7 @@ class IntegrationSpec extends FunSpec with Matchers {
   describe("FindSong") {
     describe("when the signal is empty") {
       it("should return no results") {
-        val signal = Array[Byte]()
+        val signal = Array[Short]()
         val matches = Matcher.signalToMatches(signal, songIndex)
         matches should have length 0
       }
@@ -59,7 +59,7 @@ class IntegrationSpec extends FunSpec with Matchers {
 
     describe("when the signal mostly corresponds to song 1") {
       it("should match song 1 with the highest confidence") {
-        val signal = Array[Byte](
+        val signal = Array[Short](
           0, 17, 10, -3, 0, 3, -10, -17,
           0, 17, 10, -3, 0, 3, -10, -17,
           0, 17, 10, -3, 0, 3, -10, -17,
@@ -77,7 +77,7 @@ class IntegrationSpec extends FunSpec with Matchers {
 
     describe("when the signal is identical to song 1") {
       it("should match song 1 with the highest confidence") {
-        val signal = Array[Byte](
+        val signal = Array[Short](
           0, 17, 10, -3, 0, 3, -10, -17,
           0, 17, 10, -3, 0, 3, -10, -17,
           0, 17, 10, -3, 0, 3, -10, -17,
@@ -100,7 +100,7 @@ class IntegrationSpec extends FunSpec with Matchers {
 
     describe("when the signal may correspond to song 1 or song 2") {
       it("should match song 1 and song 2 with equal confidence") {
-        val signal1 = Array[Byte](
+        val signal1 = Array[Short](
           0, 17, 10, -3, 0, 3, -10, -17,
           0, 17, 10, -3, 0, 3, -10, -17,
           0, 17, 10, -3, 0, 3, -10, -17,
@@ -113,7 +113,7 @@ class IntegrationSpec extends FunSpec with Matchers {
         matches1(1).song should be (song2)
         matches1(1).confidence should be (0.5 +- EPS)
 
-        val signal2 = Array[Byte](
+        val signal2 = Array[Short](
           0, 17, 10, -3, 0, 3, -10, -17,
           0, 17, 10, -3, 0, 3, -10, -17,
           0, 1, 0, -1, 0, 1, 0, -1,

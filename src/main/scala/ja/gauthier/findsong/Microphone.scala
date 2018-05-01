@@ -3,6 +3,7 @@ package ja.gauthier.findsong
 import ja.gauthier.findsong.types.settings._
 import ja.gauthier.findsong.types.signal._
 import java.io.File
+import java.nio._
 import javax.sound.sampled._
 
 object Microphone {
@@ -11,18 +12,16 @@ object Microphone {
     def extractMicrophoneSignal(nBytes: Int): Signal = {
         val format = AudioFile.getAudioFormat()
         val info = new DataLine.Info(classOf[TargetDataLine], format)
-        val signal = new Signal(settings.Recording.bytesPerCapture)
         val microphone = AudioSystem.getLine(info).asInstanceOf[TargetDataLine]
         try {
+            val signalBytes = new Array[Byte](settings.Recording.bytesPerCapture)
             microphone.open(format)
             microphone.start()
-            microphone.read(signal, 0, settings.Recording.bytesPerCapture)
+            microphone.read(signalBytes, 0, settings.Recording.bytesPerCapture)
+            val signalShorts = AudioFile.byteArrayToShortArray(signalBytes, Some(ByteOrder.BIG_ENDIAN))
+            signalShorts
         } finally {
             microphone.close()
         }
-        val tempFile = File.createTempFile("findsong", null)
-        AudioFile.exportSignal(signal, tempFile.getAbsolutePath())
-        val signalWithoutDcBias = AudioFile.extractFileSignal(tempFile.getAbsolutePath())
-        signalWithoutDcBias
     }
 }

@@ -6,6 +6,7 @@ import ja.gauthier.findsong.types.song._
 import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
+import java.nio._
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
 import javax.sound.sampled._
@@ -17,14 +18,18 @@ import scala.io.Source
 object AudioFile {
     val settings = Settings.settings
 
-    def exportSignal(data: Signal, name: String): Unit = {
-        val outFile = new File(name)
-        val format = getAudioFormat()
-        AudioSystem.write(
-            new AudioInputStream(new ByteArrayInputStream(data), format, data.length),
-            AudioFileFormat.Type.WAVE,
-            outFile
-        )
+    def byteArrayToShortArray(bytes: Array[Byte], byteOrder: Option[ByteOrder]): Array[Short] = {
+        // val bytesBuffer = ByteBuffer
+        //     .wrap(bytes)
+        // byteOrder match {
+        //     case Some(bo) => bytesBuffer.order(ByteOrder.BIG_ENDIAN)
+        //     case None =>
+        // }
+        // val shortsBuffer = bytesBuffer.asShortBuffer()
+        // val shorts = new Array[Short](shortsBuffer.remaining())
+        // shortsBuffer.get(shorts)
+        // shorts
+        bytes.map((byte: Byte) => (byte & 0xFF).toShort)
     }
 
     def extractFileSignal(file: String): Signal = {
@@ -45,7 +50,10 @@ object AudioFile {
             .done()
         val ffmpegExecutor = new FFmpegExecutor(ffmpeg, ffprobe)
         ffmpegExecutor.createJob(ffmpegBuilder).run()
-        IOUtils.toByteArray(AudioSystem.getAudioInputStream(fileOut))
+        val signalBytes = IOUtils
+            .toByteArray(AudioSystem.getAudioInputStream(fileOut))
+        val signalShorts = byteArrayToShortArray(signalBytes, Some(ByteOrder.LITTLE_ENDIAN))
+        signalShorts
     }
 
     def extractSongMetadata(file: String): Song = {

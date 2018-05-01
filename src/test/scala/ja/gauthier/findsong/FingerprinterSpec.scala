@@ -115,7 +115,7 @@ class FingerprinterSpec extends FunSpec with Matchers {
 
   describe("signalToSongIndex") {
     it("should return a map of SongIndexKey -> Song for the given signal") {
-      val signal = Array[Byte](
+      val signal = Array[Short](
         0, 17, 10, -3, 0, 3, -10, -17,
         0, 17, 10, -3, 0, 3, -10, -17,
         0, 17, 10, -3, 0, 3, -10, -17,
@@ -146,23 +146,23 @@ class FingerprinterSpec extends FunSpec with Matchers {
 
   describe("signalToSpectrogram") {
 
-    val sine_6_length_16 = Array[Byte](
+    val sine_6_length_16 = Array[Short](
       0 ,1, 0, -1, 0, 1, 0, -1,
       0 ,1, 0, -1, 0, 1, 0, -1
     )
 
-    val sine_6_length_17 = Array[Byte](
+    val sine_6_length_17 = Array[Short](
       0 ,1, 0, -1, 0, 1, 0, -1,
       0 ,1, 0, -1, 0, 1, 0, -1,
       0
     )
-    
-    val sine_2_4_length_16 = Array[Byte](
+
+    val sine_2_4_length_16 = Array[Short](
       0, 17, 10, -3, 0, 3, -10, -17,
       0, 17, 10, -3, 0, 3, -10, -17
     )
 
-    val sine_2_4_length_16_sine_6_length_16 = Array[Byte](
+    val sine_2_4_length_16_sine_6_length_16 = Array[Short](
       0, 17, 10, -3, 0, 3, -10, -17,
       0, 17, 10, -3, 0, 3, -10, -17,
       0, 1, 0, -1, 0, 1, 0, -1,
