@@ -1,3 +1,6 @@
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y ffmpeg
 language: scala
 scala:
    - 2.12.3
