@@ -1,14 +1,5 @@
 # Created by https://www.gitignore.io/api/sbt,vim,java,scala,audio,linux,video,macos,windows
 
-debug/**/*.txt
-debug/**/*.png
-debug/**/*.wav
-src/test/resources/*.txt
-src/test/resources/*.wav
-samples/**/*.m4a
-samples/**/*.txt
-samples/**/*.wav
-
 ### Audio ###
 *.aif
 *.iff
@@ -150,5 +141,15 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Findsong
+debug/**/*.txt
+debug/**/*.png
+debug/**/*.wav
+!src/test/resources/*.m4a
+src/test/resources/*.txt
+src/test/resources/*.wav
+samples/**/*.m4a
+samples/**/*.txt
+samples/**/*.wav
 
 # End of https://www.gitignore.io/api/sbt,vim,java,scala,audio,linux,video,macos,windows
