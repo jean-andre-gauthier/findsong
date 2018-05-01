@@ -1,5 +1,6 @@
 before_install:
-  - sudo apt-get -qq update
+  - sudo add-apt-repository ppa:mc3man/trusty-media
+  - sudo apt-get update -q
   - sudo apt-get install -y ffmpeg
 language: scala
 scala:
