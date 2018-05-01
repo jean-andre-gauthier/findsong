@@ -19,24 +19,14 @@ object AudioFile {
     val settings = Settings.settings
 
     def byteArrayToShortArray(bytes: Array[Byte], byteOrder: Option[ByteOrder]): Array[Short] = {
-        // val bytesBuffer = ByteBuffer
-        //     .wrap(bytes)
-        // byteOrder match {
-        //     case Some(bo) => bytesBuffer.order(ByteOrder.BIG_ENDIAN)
-        //     case None =>
-        // }
-        // val shortsBuffer = bytesBuffer.asShortBuffer()
-        // val shorts = new Array[Short](shortsBuffer.remaining())
-        // shortsBuffer.get(shorts)
-        // shorts
         bytes.map((byte: Byte) => (byte & 0xFF).toShort)
     }
 
     def extractFileSignal(file: String): Signal = {
         val pathOut = getReplacedExtension(file, settings.Preprocessing.intermediateFormat)
         val fileOut = new File(pathOut)
-        val ffmpeg = new FFmpeg(settings.FFmpeg.ffmpegPath)
-        val ffprobe = new FFprobe(settings.FFmpeg.ffprobePath)
+        val ffmpeg = new FFmpeg()
+        val ffprobe = new FFprobe()
         val ffmpegBuilder = new FFmpegBuilder()
             .setInput(file)
             .setAudioFilter("dynaudnorm=c")
@@ -59,8 +49,8 @@ object AudioFile {
     def extractSongMetadata(file: String): Song = {
         val pathOut = getReplacedExtension(file, "txt")
         val fileOut = new File(pathOut)
-        val ffmpeg = new FFmpeg(settings.FFmpeg.ffmpegPath)
-        val ffprobe = new FFprobe(settings.FFmpeg.ffprobePath)
+        val ffmpeg = new FFmpeg()
+        val ffprobe = new FFprobe()
         val ffmpegBuilder = new FFmpegBuilder()
             .setInput(file)
             .overrideOutputFiles(true)

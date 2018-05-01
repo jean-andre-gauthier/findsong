@@ -40,12 +40,6 @@ package object settings {
             val signed = true
         }
 
-        object FFmpeg {
-            val ffmpeg = findsong.getConfig("ffmpeg")
-            val ffmpegPath = ffmpeg.getString("ffmpeg-path")
-            val ffprobePath = ffmpeg.getString("ffprobe-path")
-        }
-
         object Recording {
             val recording = findsong.getConfig("recording")
             val bytesPerCapture = recording.getInt("bytes-per-capture")
