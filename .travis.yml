@@ -1,3 +1,5 @@
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
 before_install:
   - sudo add-apt-repository ppa:mc3man/trusty-media -y
   - sudo apt-get update -q
@@ -5,3 +7,5 @@ before_install:
 language: scala
 scala:
    - 2.12.3
+script:
+  - sbt clean coverage test coverageReport
