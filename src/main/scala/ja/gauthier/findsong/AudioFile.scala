@@ -25,7 +25,6 @@ object AudioFile {
 
     def extractFileSignal(file: String): Signal = {
         val pathOut = getReplacedExtension(file, settings.Preprocessing.intermediateFormat)
-        val fileOut = new File(pathOut)
         val ffmpeg = new FFmpeg()
         val ffprobe = new FFprobe()
         val ffmpegBuilder = new FFmpegBuilder()
@@ -41,6 +40,9 @@ object AudioFile {
             .done()
         val ffmpegExecutor = new FFmpegExecutor(ffmpeg, ffprobe)
         CompletableFuture.runAsync(ffmpegExecutor.createJob(ffmpegBuilder)).join()
+        val fileOut = new File(pathOut)
+        println(fileOut.exists())
+        println(fileOut.length())
         val signalBytes = IOUtils
             .toByteArray(AudioSystem.getAudioInputStream(fileOut))
         val signalShorts = byteArrayToShortArray(signalBytes, Some(ByteOrder.LITTLE_ENDIAN))
