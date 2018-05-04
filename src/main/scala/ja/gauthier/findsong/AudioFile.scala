@@ -9,6 +9,7 @@ import java.io.FileInputStream
 import java.nio._
 import java.nio.charset.StandardCharsets
 import java.nio.file.Paths
+import java.util.concurrent.CompletableFuture
 import javax.sound.sampled._
 import net.bramp.ffmpeg._
 import net.bramp.ffmpeg.builder.FFmpegBuilder
@@ -39,7 +40,7 @@ object AudioFile {
             .disableVideo()
             .done()
         val ffmpegExecutor = new FFmpegExecutor(ffmpeg, ffprobe)
-        ffmpegExecutor.createJob(ffmpegBuilder).run()
+        CompletableFuture.runAsync(ffmpegExecutor.createJob(ffmpegBuilder)).join()
         val signalBytes = IOUtils
             .toByteArray(AudioSystem.getAudioInputStream(fileOut))
         val signalShorts = byteArrayToShortArray(signalBytes, Some(ByteOrder.LITTLE_ENDIAN))
