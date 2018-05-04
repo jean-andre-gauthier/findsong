@@ -22,5 +22,3 @@ lazy val root = (project in file(".")).
       typesafeConfig
     )
   )
-
-addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")
