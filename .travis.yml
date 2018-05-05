@@ -1,9 +1,10 @@
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 before_install:
-  - brew install ffmpeg
+  - sudo add-apt-repository ppa:mc3man/trusty-media -y
+  - sudo apt-get update -q
+  - sudo apt-get install -y ffmpeg
 language: scala
-os: osx
 scala:
    - 2.12.3
 script:
