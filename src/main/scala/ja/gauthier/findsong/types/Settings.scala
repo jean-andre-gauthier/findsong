@@ -35,7 +35,7 @@ package object settings {
             val channels = 1
             val codec = "pcm_u8"
             val inputFormat = "m4a"
-            val intermediateFormat = "wav"
+            val intermediateFormat = "u8"
             val sampleRate = preprocessing.getInt("sample-rate")
             val signed = true
         }

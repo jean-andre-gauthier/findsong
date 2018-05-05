@@ -35,6 +35,7 @@ object AudioFile {
             .setAudioChannels(settings.Preprocessing.channels)
             .setAudioCodec(settings.Preprocessing.codec)
             .setAudioSampleRate(settings.Preprocessing.sampleRate)
+            .setFormat(settings.Preprocessing.intermediateFormat)
             .disableSubtitle()
             .disableVideo()
             .done()
@@ -42,7 +43,7 @@ object AudioFile {
         CompletableFuture.runAsync(ffmpegExecutor.createJob(ffmpegBuilder)).join()
         val fileOut = new File(pathOut)
         val signalBytes = IOUtils
-            .toByteArray(AudioSystem.getAudioInputStream(fileOut))
+            .toByteArray(new FileInputStream(fileOut))
         val signalShorts = byteArrayToShortArray(signalBytes, Some(ByteOrder.LITTLE_ENDIAN))
         signalShorts
     }
