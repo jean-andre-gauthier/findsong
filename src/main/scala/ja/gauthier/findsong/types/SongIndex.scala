@@ -1,7 +1,6 @@
 package ja.gauthier.findsong.types
 
 import ja.gauthier.findsong.types.debuggable._
-import ja.gauthier.findsong.types.settings._
 import ja.gauthier.findsong.types.song._
 
 package object songIndex {
@@ -9,9 +8,7 @@ package object songIndex {
 
     case class SongIndexValue(t1: Int, song: Song)
 
-    implicit class DebuggableSongIndex(songIndex: SongIndex) extends Debuggable {
-        val settings = Settings.settings
-
+    implicit class DebuggableSongIndex(songIndex: SongIndex)(implicit settings: Settings) extends Debuggable {
         def toFile(filename: String): Unit = {
             if (settings.General.debug) {
                 val fileContent = songIndex

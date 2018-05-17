@@ -1,7 +1,7 @@
 package ja.gauthier.findsong
 
-import ja.gauthier.findsong.types.settings._
 import ja.gauthier.findsong.types.signal._
+import ja.gauthier.findsong.types.Settings
 import ja.gauthier.findsong.types.song._
 import java.io.ByteArrayInputStream
 import java.io.File
@@ -17,13 +17,11 @@ import org.apache.commons.io._
 import scala.io.Source
 
 object AudioFile {
-    val settings = Settings.settings
-
     def byteArrayToShortArray(bytes: Array[Byte], byteOrder: Option[ByteOrder]): Array[Short] = {
         bytes.map((byte: Byte) => (byte & 0xFF).toShort)
     }
 
-    def extractFileSignal(file: String): Signal = {
+    def extractFileSignal(file: String)(implicit settings: Settings): Signal = {
         val pathOut = getReplacedExtension(file, settings.Preprocessing.intermediateFormat)
         val ffmpeg = new FFmpeg()
         val ffprobe = new FFprobe()
@@ -48,7 +46,7 @@ object AudioFile {
         signalShorts
     }
 
-    def extractSongMetadata(file: String): Song = {
+    def extractSongMetadata(file: String)(implicit settings: Settings): Song = {
         val pathOut = getReplacedExtension(file, "txt")
         val fileOut = new File(pathOut)
         val ffmpeg = new FFmpeg()
@@ -80,7 +78,7 @@ object AudioFile {
         )
     }
 
-    def getAudioFormat(): AudioFormat = {
+    def getAudioFormat(implicit settings: Settings): AudioFormat = {
         new AudioFormat(
             settings.Preprocessing.sampleRate,
             settings.Preprocessing.bitsPerSample,

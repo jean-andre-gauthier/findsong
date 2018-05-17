@@ -1,6 +1,6 @@
 package ja.gauthier.findsong
 
-import ja.gauthier.findsong.types.settings._
+import ja.gauthier.findsong.types.Settings
 import ja.gauthier.findsong.types.songIndex._
 import java.io.File
 import javax.sound.sampled._
@@ -9,12 +9,10 @@ import scala.concurrent._
 import scala.collection.JavaConverters._
 
 object Indexer {
-    val settings = Settings.settings
-
-    def indexSongs(directory: String)(implicit executionContext: ExecutionContext): Future[SongIndex] = {
-        val directoryFile = new File(directory)
+    def indexSongs(implicit executionContext: ExecutionContext, settings: Settings): Future[SongIndex] = {
+        val directoryFile = new File(settings.General.inputDirectory)
         val songFiles = FileUtils
-            .listFiles(directoryFile, Array(settings.Preprocessing.inputFormat), true)
+            .listFiles(directoryFile, Array(settings.General.inputFormat), true)
             .asScala
             .toSeq
             .to[collection.immutable.Seq]

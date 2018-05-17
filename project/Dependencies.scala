@@ -9,5 +9,6 @@ object Dependencies {
   lazy val rtree = "com.github.davidmoten" % "rtree" % "0.8.3"
   lazy val scalaArm = "com.jsuereth" %% "scala-arm" % "2.0"
   lazy val scalatest = "org.scalatest" %% "scalatest" % "3.0.3"
+  lazy val scopt = "com.github.scopt" %% "scopt" % "3.7.0"
   lazy val typesafeConfig = "com.typesafe" % "config" % "1.3.2"
 }

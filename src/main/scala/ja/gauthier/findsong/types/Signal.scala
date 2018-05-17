@@ -1,12 +1,9 @@
 package ja.gauthier.findsong.types
 
 import ja.gauthier.findsong.types.debuggable._
-import ja.gauthier.findsong.types.settings._
 
 object signal {
-    implicit class DebuggableSignal(signal: Signal) extends Debuggable {
-        val settings = Settings.settings
-
+    implicit class DebuggableSignal(signal: Signal)(implicit settings: Settings) extends Debuggable {
         def toFile(filename: String): Unit = {
             if (settings.General.debug) {
                 val fileContent = signal

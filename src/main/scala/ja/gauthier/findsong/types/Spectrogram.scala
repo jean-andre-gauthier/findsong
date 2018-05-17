@@ -2,12 +2,9 @@ package ja.gauthier.findsong.types
 
 import breeze.linalg._
 import ja.gauthier.findsong.types.debuggable._
-import ja.gauthier.findsong.types.settings._
 
 package object spectrogram {
-    implicit class DebuggableSpectrogram(spectrogram: Spectrogram) extends Debuggable {
-        val settings = Settings.settings
-
+    implicit class DebuggableSpectrogram(spectrogram: Spectrogram)(implicit settings: Settings) extends Debuggable {
         def toFile(filename: String): Unit = {
             if (settings.General.debug) {
                 val fileContent = spectrogram

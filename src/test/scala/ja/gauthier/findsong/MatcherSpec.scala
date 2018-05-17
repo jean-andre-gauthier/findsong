@@ -5,12 +5,14 @@ import org.scalatest._
 import scala.collection.JavaConverters._
 import ja.gauthier.findsong.types.matchPackage._
 import ja.gauthier.findsong.types.peak._
+import ja.gauthier.findsong.types._
 import ja.gauthier.findsong.types.song._
 import ja.gauthier.findsong.types.songConfidence._
 import ja.gauthier.findsong.types.songIndex._
 import ja.gauthier.findsong.types.songOffsets._
 
 class MatcherSpec extends FunSpec with Matchers {
+  implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
 
   val EPS = 0.001
 

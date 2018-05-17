@@ -4,7 +4,7 @@ import breeze.linalg._
 import breeze.linalg.operators._
 import breeze.linalg.support._
 import breeze.util._
-import ja.gauthier.findsong.types.settings._
+import ja.gauthier.findsong.types._
 import ja.gauthier.findsong.types.songIndex._
 import javax.sound.sampled._
 import java.lang.Runtime
@@ -18,19 +18,17 @@ import scala.util.Failure
 import scala.util.Success
 
 object FindSong extends App {
-    val settings = Settings.settings
-
-    if (args.length > 0) {
-        findSong(args(0))
-    } else {
-        println("Error: no input directory specified")
+    Settings.settings(args) match {
+        case Some(settings) =>
+            findSong(settings)
+        case None =>
     }
 
-    def findSong(inputDirectory: String): Unit = {
+    def findSong(implicit settings: Settings): Unit = {
         implicit val executionContext = ExecutionContext.fromExecutor(
             Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors))
 
-        Indexer.indexSongs(inputDirectory)
+        Indexer.indexSongs
             .andThen {
                 case Success(songIndex) =>
                     println("Songs indexed")
@@ -42,7 +40,7 @@ object FindSong extends App {
 
     }
 
-    def recordLoop(songIndex: SongIndex): Unit = {
+    def recordLoop(songIndex: SongIndex)(implicit settings: Settings): Unit = {
         val startRecordingMessage = "Press <Enter> to start recording"
         println(startRecordingMessage)
 

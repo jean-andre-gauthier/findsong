@@ -3,12 +3,9 @@ package ja.gauthier.findsong.types
 import ja.gauthier.findsong.types.debuggable._
 import ja.gauthier.findsong.types.peak._
 import ja.gauthier.findsong.types.peakPair._
-import ja.gauthier.findsong.types.settings._
 
 package object peakPairs {
-    implicit class DebuggablePeakPairs(peakPairs: PeakPairs) extends Debuggable {
-        val settings = Settings.settings
-
+    implicit class DebuggablePeakPairs(peakPairs: PeakPairs)(implicit settings: Settings) extends Debuggable {
         def toFile(filename: String): Unit = {
             if (settings.General.debug) {
                 val fileContent = peakPairs

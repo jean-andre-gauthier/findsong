@@ -11,9 +11,11 @@ import ja.gauthier.findsong.types.constellationMap._
 import ja.gauthier.findsong.types.peak._
 import ja.gauthier.findsong.types.peakPairs._
 import ja.gauthier.findsong.types.song._
+import ja.gauthier.findsong.types._
 import ja.gauthier.findsong.types.songIndex._
 
 class FingerprinterSpec extends FunSpec with Matchers {
+  implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
 
   describe("constellationMapToPeakPairs") {
     describe("when the window contains no peaks") {

@@ -12,7 +12,7 @@ import ja.gauthier.findsong.types.constellationMap._
 import ja.gauthier.findsong.types.peak._
 import ja.gauthier.findsong.types.peakPair._
 import ja.gauthier.findsong.types.peakPairs._
-import ja.gauthier.findsong.types.settings._
+import ja.gauthier.findsong.types.Settings
 import ja.gauthier.findsong.types.signal._
 import ja.gauthier.findsong.types.song._
 import ja.gauthier.findsong.types.songIndex._
@@ -20,9 +20,7 @@ import ja.gauthier.findsong.types.spectrogram._
 import scala.collection.JavaConverters._
 
 object Fingerprinter {
-    val settings = Settings.settings
-
-    def constellationMapToPeakPairs(constellationMap: ConstellationMap): PeakPairs = {
+    def constellationMapToPeakPairs(constellationMap: ConstellationMap)(implicit settings: Settings): PeakPairs = {
         val peakEntries = constellationMap
             .entries
             .toBlocking()
@@ -33,10 +31,10 @@ object Fingerprinter {
                 constellationMap
                     .search(
                         Geometries.rectangle(
-                            peakEntry.geometry.x() + settings.ConstellationMap.windowDeltaTi,
-                            peakEntry.geometry.y() - settings.ConstellationMap.windowDeltaF,
-                            peakEntry.geometry.x() + settings.ConstellationMap.windowDeltaT,
-                            peakEntry.geometry.y() + settings.ConstellationMap.windowDeltaF
+                            peakEntry.geometry.x() + settings.PeakPairs.windowDeltaTi,
+                            peakEntry.geometry.y() - settings.PeakPairs.windowDeltaF,
+                            peakEntry.geometry.x() + settings.PeakPairs.windowDeltaT,
+                            peakEntry.geometry.y() + settings.PeakPairs.windowDeltaF
                         ))
                         .toBlocking()
                         .toIterable()
@@ -44,7 +42,7 @@ object Fingerprinter {
                         .toSeq
                         .map(_.value())
                         .sorted
-                        .take(settings.ConstellationMap.fanout)
+                        .take(settings.PeakPairs.fanout)
                         .map(otherPeak =>
                                 if (peakEntry.value().time <= otherPeak.time)
                                     (peakEntry.value(), otherPeak)
@@ -70,11 +68,11 @@ object Fingerprinter {
                 songIndex + (key -> values)
             })
         val songIndexSortedValues = songIndexUnsortedValues.mapValues(_.sortBy(_.t1))
-        songIndexSortedValues.toFile("peak-pairs-to-song-index-song-index-" + song.title)
-        songIndexUnsortedValues
+        // songIndexSortedValues.toFile("peak-pairs-to-song-index-song-index-" + song.title)
+        songIndexSortedValues
     }
 
-    def signalToPeakPairs(signal: Signal, song: Song): PeakPairs = {
+    def signalToPeakPairs(signal: Signal, song: Song)(implicit settings: Settings): PeakPairs = {
         signal.toFile("signal-to-peak-pairs-signal-" + song.title)
         val spectrogram = signalToSpectrogram(signal)
         spectrogram.toFile("signal-to-peak-pairs-spectrogram-" + song.title)
@@ -85,13 +83,13 @@ object Fingerprinter {
         peakPairs
     }
 
-    def signalToSongIndex(signal: Signal, song: Song): SongIndex =  {
+    def signalToSongIndex(signal: Signal, song: Song)(implicit settings: Settings): SongIndex =  {
         val peakPairs = signalToPeakPairs(signal, song)
         val songIndex = peakPairsToSongIndex(peakPairs, song)
         songIndex
     }
 
-    def signalToSpectrogram(signal: Signal): Spectrogram = {
+    def signalToSpectrogram(signal: Signal)(implicit settings: Settings): Spectrogram = {
         val raggedChunks = signal
             .map(_.toDouble)
             .sliding(
@@ -118,7 +116,7 @@ object Fingerprinter {
         spectrogram
     }
 
-    def spectrogramToConstellationMap(spectrogram: Spectrogram): ConstellationMap = {
+    def spectrogramToConstellationMap(spectrogram: Spectrogram)(implicit settings: Settings): ConstellationMap = {
         val indices = spectrogram
             .mapPairs((rowColumn, _) => rowColumn)
         val peaks = indices(*, ::)

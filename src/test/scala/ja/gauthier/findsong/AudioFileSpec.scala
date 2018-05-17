@@ -3,11 +3,13 @@ package ja.gauthier.findsong
 import breeze.linalg._
 import breeze.math._
 import breeze.signal._
-import org.scalatest._
+import ja.gauthier.findsong.types._
 import java.io._
+import org.scalatest._
 
 class AudioFileSpec extends FunSpec with Matchers {
   val testFile = "./src/test/resources/test.m4a"
+  implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
 
   describe("extractSongMetadata") {
     it("should extract the song's metadata") {

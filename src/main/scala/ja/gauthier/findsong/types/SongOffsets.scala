@@ -1,13 +1,10 @@
 package ja.gauthier.findsong.types
 
 import ja.gauthier.findsong.types.debuggable._
-import ja.gauthier.findsong.types.settings._
 import ja.gauthier.findsong.types.song._
 
 package object songOffsets {
-    implicit class DebuggableSongOffsets(songOffsets: SongOffsets) extends Debuggable {
-        val settings = Settings.settings
-
+    implicit class DebuggableSongOffsets(songOffsets: SongOffsets)(implicit settings: Settings) extends Debuggable {
         def toFile(filename: String): Unit = {
             if (settings.General.debug) {
                 val fileContent = songOffsets

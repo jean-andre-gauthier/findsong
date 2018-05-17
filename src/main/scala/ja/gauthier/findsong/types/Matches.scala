@@ -2,12 +2,9 @@ package ja.gauthier.findsong.types
 
 import ja.gauthier.findsong.types.debuggable._
 import ja.gauthier.findsong.types.matchPackage._
-import ja.gauthier.findsong.types.settings._
 
 package object matches {
-    implicit class DebuggableMatches(matches: Matches) extends Debuggable {
-        val settings = Settings.settings
-
+    implicit class DebuggableMatches(matches: Matches)(implicit settings: Settings) extends Debuggable {
         def toFile(filename: String): Unit = {
             if (settings.General.debug) {
                 val fileContent = matches

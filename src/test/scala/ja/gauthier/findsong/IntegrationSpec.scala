@@ -4,8 +4,10 @@ import org.scalactic._
 import org.scalatest._
 import scala.collection.JavaConverters._
 import ja.gauthier.findsong.types.song._
+import ja.gauthier.findsong.types._
 
 class IntegrationSpec extends FunSpec with Matchers {
+  implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
 
   val EPS = 0.001
 

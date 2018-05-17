@@ -19,6 +19,7 @@ lazy val root = (project in file(".")).
       logback,
       rtree,
       scalatest % Test,
+      scopt,
       typesafeConfig
     )
   )
