@@ -19,8 +19,18 @@ import ja.gauthier.findsong.types.songIndex._
 import ja.gauthier.findsong.types.spectrogram._
 import scala.collection.JavaConverters._
 
+/**
+ *  This object contains helper methods for creating a signal fingerprint.
+ */
 object Fingerprinter {
-    def constellationMapToPeakPairs(constellationMap: ConstellationMap)(implicit settings: Settings): PeakPairs = {
+    /**
+     *  Creates a list of peak pairs by iterating through a constellation map and pairing up all peaks that are in the vicinity of each other. The rectangular window in which neighbouring pairs are scanned is [f + settings.PeakPairs.windowDeltaF, f - settings.PeakPairs.windowDeltaF], [t + settings.PeakPairs.windowDeltaTi, t + settings.PeakPairs.windowDeltaTi + settings.PeakPairs.windowDeltaT].
+     *
+     *  @param constellationMap a map that contains the peaks to pair up
+     *  @param settings a Settings object containing the options for the app
+     *  @return the peak pairs in the constallation map
+     */
+    private def constellationMapToPeakPairs(constellationMap: ConstellationMap)(implicit settings: Settings): PeakPairs = {
         val peakEntries = constellationMap
             .entries
             .toBlocking()
@@ -53,11 +63,25 @@ object Fingerprinter {
         peakPairs
     }
 
-    def hannFunction(signals: DenseMatrix[Double]): DenseMatrix[Double] = {
+    /**
+     *  Applies the Hann function to an array of signals
+     *
+     *  @param signals the array of signals
+     *  @return an array where the original signals have been hanned
+     */
+    private def hannFunction(signals: DenseMatrix[Double]): DenseMatrix[Double] = {
         signals :* (0.5 * (1.0 - cos(2.0 * Pi * signals.mapPairs((rowColumn, _) => rowColumn._2.toDouble) / (signals.cols - 1.0))))
     }
 
-    def peakPairsToSongIndex(peakPairs: PeakPairs, song: Song): SongIndex = {
+    /**
+     *  Creates an index containing the fingerprints from the song.
+     *
+     *  @param peakPairs the peak pairs that have to be inserted in the song index
+     *  @param song the song the peak pairs have been extracted from
+     *  @param settings a Settings object containing the options for the app
+     *  @return an index with the song's fingerprints
+     */
+    private def peakPairsToSongIndex(peakPairs: PeakPairs, song: Song)(implicit settings: Settings): SongIndex = {
         val songIndexUnsortedValues = peakPairs
             .foldLeft(SongIndex())((songIndex, peakPair) => {
                 val key = SongIndexKey(
@@ -68,10 +92,18 @@ object Fingerprinter {
                 songIndex + (key -> values)
             })
         val songIndexSortedValues = songIndexUnsortedValues.mapValues(_.sortBy(_.t1))
-        // songIndexSortedValues.toFile("peak-pairs-to-song-index-song-index-" + song.title)
+        songIndexSortedValues.toFile("peak-pairs-to-song-index-song-index-" + song.title)
         songIndexSortedValues
     }
 
+    /**
+     *  Extracts peak pairs from a signal.
+     *
+     *  @param signal the signal peak pairs have to be extracted from
+     *  @param song the song metadata for the signal
+     *  @param settings a Settings object containing the options for the app
+     *  @return the peak pairs detected in the signal
+     */
     def signalToPeakPairs(signal: Signal, song: Song)(implicit settings: Settings): PeakPairs = {
         signal.toFile("signal-to-peak-pairs-signal-" + song.title)
         val spectrogram = signalToSpectrogram(signal)
@@ -83,13 +115,28 @@ object Fingerprinter {
         peakPairs
     }
 
+    /**
+     *  Creates an index containing the fingerprints from the input signal.
+     *
+     *  @param signal the signal from which fingerprints are extracted
+     *  @param song the song associated to the signal
+     *  @param settings a Settings object containing the options for the app
+     *  @return an index containing the fingerprints from the input signal
+     */
     def signalToSongIndex(signal: Signal, song: Song)(implicit settings: Settings): SongIndex =  {
         val peakPairs = signalToPeakPairs(signal, song)
         val songIndex = peakPairsToSongIndex(peakPairs, song)
         songIndex
     }
 
-    def signalToSpectrogram(signal: Signal)(implicit settings: Settings): Spectrogram = {
+    /**
+     *  Converts a signal from the time domain to the frequency domain.
+     *
+     *  @param signal the input signal
+     *  @param settings a Settings object containing the options for the app
+     *  @return the representation of the input signal in the frequency domain
+     */
+    private def signalToSpectrogram(signal: Signal)(implicit settings: Settings): Spectrogram = {
         val raggedChunks = signal
             .map(_.toDouble)
             .sliding(
@@ -116,7 +163,14 @@ object Fingerprinter {
         spectrogram
     }
 
-    def spectrogramToConstellationMap(spectrogram: Spectrogram)(implicit settings: Settings): ConstellationMap = {
+    /**
+     *  Computes a constellation map for the given spectrogram. A point is considered as a peak if no other point has a higher amplitude in the window [f - settings.ConstellationMap.peakDeltaF, f + settings.ConstellationMap.peakDeltaF], [t - settings.ConstellationMap.peakDeltaT, t + settings.ConstellationMap.peakDeltaT]
+     *
+     *  @param spectrogram the spectogram based which the constellation map is computed
+     *  @param settings a Settings object containing the options for the app
+     *  @return the constellation map extracted from the spectrogram
+     */
+    private def spectrogramToConstellationMap(spectrogram: Spectrogram)(implicit settings: Settings): ConstellationMap = {
         val indices = spectrogram
             .mapPairs((rowColumn, _) => rowColumn)
         val peaks = indices(*, ::)

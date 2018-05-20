@@ -11,8 +11,18 @@ import ja.gauthier.findsong.types.songIndex._
 import ja.gauthier.findsong.types.songOffsets._
 import java.time.LocalDateTime
 
+/**
+ * This object contains helper methods to match a signal against a song index
+ */
 object Matcher {
-    def peakPairsToSongOffsets(peakPairs: PeakPairs, songIndex: SongIndex): SongOffsets = {
+    /**
+     *  Iterates through the peak pairs and looks up the song index, in order to retrieve the matching songs and the offsets at which the matches occurred.
+     *
+     *  @param peakPairs the peak pairs for which matches have to be computed
+     *  @param songIndex the index containing the song fingerprints
+     *  @return a map of matching songs and the offsets at which the matches occurred
+     */
+    private def peakPairsToSongOffsets(peakPairs: PeakPairs, songIndex: SongIndex): SongOffsets = {
         val songOffsets = peakPairs.foldLeft(SongOffsets())((songOffsetsMap, peakPair) => {
             val songIndexValues = songIndex.get(SongIndexKey(
                 peakPair._1.frequency,
@@ -34,6 +44,14 @@ object Matcher {
         songOffsets
     }
 
+    /**
+     *  Computes the fingerprints for a signal and retrieves the matching songs from the song index.
+     *
+     *  @param signal the signal to be matched against the song index
+     *  @param songIndex the index containing the song fingerprints
+     *  @param settings a Settings object containing the options for the app
+     *  @return a list of matching songs and their score
+     */
     def signalToMatches(signal: Signal, songIndex: SongIndex)(implicit settings: Settings): Matches = {
         signal.toFile("signal-to-matches-signal-microphone")
         val peakPairs = Fingerprinter.signalToPeakPairs(signal, Song("", "", "", "", "microphone", ""))
@@ -47,12 +65,24 @@ object Matcher {
         matches
     }
 
-    def songConfidenceToMatches(songConfidence: SongConfidence): Matches = {
+    /**
+     *  Returns a sorted list of match scores
+     *
+     *  @param songConfidence a list of unsorted match scores
+     *  @return a list of sorted match scores
+     */
+    private def songConfidenceToMatches(songConfidence: SongConfidence): Matches = {
         val matches = songConfidence.toSeq.map((songConfidence) => Match(songConfidence._1, songConfidence._2)).sorted
         matches
     }
 
-    def songOffsetsToSongConfidence(songOffsets: SongOffsets): SongConfidence = {
+    /**
+     *  Returns a list of match scores for a song offset map. A song's match score is the mode of its offset divided by the sum of all modes.
+     *
+     *  @param songOffsets the song offset map
+     *  @return a list of match scores
+     */
+    private def songOffsetsToSongConfidence(songOffsets: SongOffsets): SongConfidence = {
         val songToMaxOffsetOccurrence = songOffsets
             .foldLeft(Map[Song, Int]())((songToMaxOffsetOccurrenceMap, songOffsetsPair) => {
                 songToMaxOffsetOccurrenceMap + (

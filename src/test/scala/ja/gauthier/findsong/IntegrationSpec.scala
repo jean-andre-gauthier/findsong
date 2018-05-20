@@ -4,9 +4,10 @@ import org.scalactic._
 import org.scalatest._
 import scala.collection.JavaConverters._
 import ja.gauthier.findsong.types.song._
+import ja.gauthier.findsong.types.songIndex._
 import ja.gauthier.findsong.types._
 
-class IntegrationSpec extends FunSpec with Matchers {
+class IntegrationSpec extends FunSpec with Matchers with PrivateMethodTester {
   implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
 
   val EPS = 0.001
@@ -45,7 +46,8 @@ class IntegrationSpec extends FunSpec with Matchers {
     0, 1, 0, -1, 0, 1, 0, -1
   )
 
-  val songIndex = Indexer.combineSongIndexes(Seq(
+  val combineSongIndexes = PrivateMethod[SongIndex]('combineSongIndexes)
+  val songIndex = Indexer invokePrivate combineSongIndexes(Seq(
     Fingerprinter.signalToSongIndex(signalSong1, song1),
     Fingerprinter.signalToSongIndex(signalSong2, song2)
   ))

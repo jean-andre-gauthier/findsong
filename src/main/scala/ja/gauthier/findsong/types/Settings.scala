@@ -3,6 +3,9 @@ package ja.gauthier.findsong.types
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
 
+/**
+ *  This object contains helper methods for retrieving configuration values from config files or from the command line.
+ */
 object Settings {
     val config = ConfigFactory.load()
     config.checkValid(ConfigFactory.defaultReference(), "findsong")
@@ -71,8 +74,8 @@ object Settings {
         windowDeltaTi: Int = ApplicationConfigArguments.PeakPairs.windowDeltaTi
     )
 
-    val argumentsParser = new scopt.OptionParser[CliArguments]("scopt") {
-        head("scopt", "3.x")
+    val argumentsParser = new scopt.OptionParser[CliArguments]("") {
+        head("findsong", "1.0.1")
 
         opt[Int]("bytesPerCapture")
             .action((bytesPerCapture, cliArguments) =>
@@ -89,9 +92,9 @@ object Settings {
                 cliArguments.copy(bytesPerChunkStep = bytesPerChunkStep))
                     .text(s"Size of the stride between two fingerprinting chunks in bytes (default = ${ApplicationConfigArguments.Spectrogram.bytesPerChunkStep})")
 
-        opt[Boolean]("debug")
+        opt[Unit]("debug")
             .action((debug, cliArguments) =>
-                cliArguments.copy(debug = debug))
+                cliArguments.copy(debug = true))
                     .text(s"Create intermediate dump files during song fingerprinting and matching (default = ${ApplicationConfigArguments.General.debug})")
 
         opt[Int]("fanout")
@@ -149,6 +152,12 @@ object Settings {
                     .text(s"Minimal time difference for neighbouring peaks to be paired up (default = ${ApplicationConfigArguments.PeakPairs.windowDeltaTi})")
     }
 
+    /**
+     *  Parses the CLI arguments, using default values if options are missing.
+     *
+     *  @param args the CLI arguments
+     *  @return An option with the setting values, None if the parsing failed
+     */
     def settings(args: Array[String]): Option[Settings] = {
         val cliArgumentsOption = argumentsParser.parse(args, CliArguments())
         cliArgumentsOption.flatMap((cliArguments: CliArguments) => Some(new Settings(cliArguments)))

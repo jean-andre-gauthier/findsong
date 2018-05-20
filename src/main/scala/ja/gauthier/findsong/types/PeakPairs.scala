@@ -4,8 +4,16 @@ import ja.gauthier.findsong.types.debuggable._
 import ja.gauthier.findsong.types.peak._
 import ja.gauthier.findsong.types.peakPair._
 
+/**
+ *  Contains the class / type definitions for peak pair lists.
+ */
 package object peakPairs {
     implicit class DebuggablePeakPairs(peakPairs: PeakPairs)(implicit settings: Settings) extends Debuggable {
+        /**
+         *  Dumps the contents of the peak pair list to a file.
+         *
+         *  @param filename the name of the file where the peak pair list will be dumped into
+         */
         def toFile(filename: String): Unit = {
             if (settings.General.debug) {
                 val fileContent = peakPairs
@@ -25,5 +33,8 @@ package object peakPairs {
         }
     }
 
-    type PeakPairs = Seq[(Peak, Peak)]
+    /**
+     *  Peak pairs are a sequence of peak pairs.
+     */
+    type PeakPairs = Seq[PeakPair]
 }

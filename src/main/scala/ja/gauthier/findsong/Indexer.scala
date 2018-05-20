@@ -8,7 +8,17 @@ import org.apache.commons.io._
 import scala.concurrent._
 import scala.collection.JavaConverters._
 
+/**
+ *  This object contains helper methods for creating a song fingerprint index.
+ */
 object Indexer {
+    /**
+     *  Creates a song index for the files with format settings.General.inputFormat in the directory settings.General.inputDirectory.
+     *
+     *  @param executionContext an executionContext for the indexing operations
+     *  @param settings a Settings object containing the options for the app
+     *  @return a future that completes once all songs are indexed
+     */
     def indexSongs(implicit executionContext: ExecutionContext, settings: Settings): Future[SongIndex] = {
         val directoryFile = new File(settings.General.inputDirectory)
         val songFiles = FileUtils
@@ -26,7 +36,12 @@ object Indexer {
                 .map((songIndexes) => combineSongIndexes(songIndexes))
     }
 
-    def combineSongIndexes(songIndexes: Seq[SongIndex]): SongIndex = {
+    /**
+     *  Creates a song index with the contents from the list of song indexes.
+     *
+     *  @return a song index with the combined fingerprints from the list of song indexes
+     */
+    private def combineSongIndexes(songIndexes: Seq[SongIndex]): SongIndex = {
         songIndexes.flatMap(_.toSeq).groupBy(_._1).mapValues(_.flatMap(_._2))
     }
 }

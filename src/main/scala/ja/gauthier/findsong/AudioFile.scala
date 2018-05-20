@@ -16,11 +16,27 @@ import net.bramp.ffmpeg.builder.FFmpegBuilder
 import org.apache.commons.io._
 import scala.io.Source
 
+/**
+ *  This object contains helper methods for ffmpeg and the java sound API.
+ */
 object AudioFile {
-    def byteArrayToShortArray(bytes: Array[Byte], byteOrder: Option[ByteOrder]): Array[Short] = {
+    /**
+     *  Transforms an array of Bytes to an array of Shorts.
+     *
+     *  @param bytes the Byte array
+     *  @return an array of Shorts
+     */
+    def byteArrayToShortArray(bytes: Array[Byte]): Array[Short] = {
         bytes.map((byte: Byte) => (byte & 0xFF).toShort)
     }
 
+    /**
+     *  Uses ffmpeg to retrieve the signal contained in the input file (without DC bias).
+     *
+     *  @param file the input file
+     *  @param settings a Settings object containing the options for the app
+     *  @return the signal extracted from the input file
+     */
     def extractFileSignal(file: String)(implicit settings: Settings): Signal = {
         val pathOut = getReplacedExtension(file, settings.Preprocessing.intermediateFormat)
         val ffmpeg = new FFmpeg()
@@ -42,10 +58,17 @@ object AudioFile {
         val fileOut = new File(pathOut)
         val signalBytes = IOUtils
             .toByteArray(new FileInputStream(fileOut))
-        val signalShorts = byteArrayToShortArray(signalBytes, Some(ByteOrder.LITTLE_ENDIAN))
+        val signalShorts = byteArrayToShortArray(signalBytes)
         signalShorts
     }
 
+    /**
+     *  Uses ffmpeg to extract the metadata from an audio file.
+     *
+     *  @param file the input file
+     *  @param settings a Settings object containing the options for the app
+     *  @return the song metadata
+     */
     def extractSongMetadata(file: String)(implicit settings: Settings): Song = {
         val pathOut = getReplacedExtension(file, "txt")
         val fileOut = new File(pathOut)
@@ -78,6 +101,12 @@ object AudioFile {
         )
     }
 
+    /**
+     *  Creates an AudioFormat instance.
+     *
+     *  @param settings a Settings object containing the options for the app
+     *  @return a new AudioFormat instance
+     */
     def getAudioFormat(implicit settings: Settings): AudioFormat = {
         new AudioFormat(
             settings.Preprocessing.sampleRate,
@@ -88,7 +117,14 @@ object AudioFile {
         )
     }
 
-    def getReplacedExtension(file: String, extension: String): String = {
+    /**
+     *  Replaces the extension in the input file name by the provided extension.
+     *  
+     *  @param file the input file name
+     *  @param extension the new extension
+     *  @return the input file name with the new extension
+     */
+    private def getReplacedExtension(file: String, extension: String): String = {
         val fileNameIn = FilenameUtils.getBaseName(file)
         val pathIn = Paths.get(file)
         val parentPath = pathIn.getParent()

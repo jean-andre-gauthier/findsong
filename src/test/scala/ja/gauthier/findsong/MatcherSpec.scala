@@ -3,15 +3,16 @@ package ja.gauthier.findsong
 import org.scalactic._
 import org.scalatest._
 import scala.collection.JavaConverters._
+import ja.gauthier.findsong.types.matches._
 import ja.gauthier.findsong.types.matchPackage._
 import ja.gauthier.findsong.types.peak._
-import ja.gauthier.findsong.types._
 import ja.gauthier.findsong.types.song._
 import ja.gauthier.findsong.types.songConfidence._
 import ja.gauthier.findsong.types.songIndex._
 import ja.gauthier.findsong.types.songOffsets._
+import ja.gauthier.findsong.types._
 
-class MatcherSpec extends FunSpec with Matchers {
+class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
   implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
 
   val EPS = 0.001
@@ -29,13 +30,15 @@ class MatcherSpec extends FunSpec with Matchers {
   val song4 = Song(album, artist, disc, genre, "song 4", track)
 
   describe("peakPairsToSongOffsets") {
+    val peakPairsToSongOffsets = PrivateMethod[SongOffsets]('peakPairsToSongOffsets)
+
     describe("when the song index is empty") {
       val songIndex = SongIndex()
 
       describe("when the signal doesn't contain any peak pair") {
         it("should return an empty song offset map") {
           val peakPairs = Seq.empty
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should have size 0
         }
       }
@@ -47,7 +50,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 5, 7), Peak(0, 6, 8)),
             (Peak(0, 9, 11), Peak(0, 10, 12))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should have size 0
         }
       }
@@ -59,7 +62,7 @@ class MatcherSpec extends FunSpec with Matchers {
       describe("when the signal doesn't contain any peak pair") {
         it("should return an empty song offset map") {
           val peakPairs = Seq.empty
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should have size 0
         }
       }
@@ -70,7 +73,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 1, 1), Peak(0, 0, 2)),
             (Peak(0, 1, 3), Peak(0, 2, 4))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should contain theSameElementsAs Seq(song1 -> Seq(0))
         }
       }
@@ -81,7 +84,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 1, 0), Peak(0, 0, 1)),
             (Peak(0, 1, 3), Peak(0, 2, 4))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should contain theSameElementsAs Seq(song1 -> Seq(1))
         }
       }
@@ -92,7 +95,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 1, 1), Peak(0, 0, 3)),
             (Peak(0, 1, 3), Peak(0, 2, 4))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should have size 0
         }
       }
@@ -103,7 +106,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 2, 1), Peak(0, 0, 2)),
             (Peak(0, 1, 3), Peak(0, 2, 4))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should have size 0
         }
       }
@@ -114,7 +117,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 1, 1), Peak(0, 2, 2)),
             (Peak(0, 1, 3), Peak(0, 2, 4))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should have size 0
         }
       }
@@ -125,7 +128,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 1, 2), Peak(0, 0, 3)),
             (Peak(0, 1, 3), Peak(0, 2, 4))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should have size 0
         }
       }
@@ -144,7 +147,7 @@ class MatcherSpec extends FunSpec with Matchers {
       describe("when the signal doesn't contain any peak pair") {
         it("should return an empty song offset map") {
           val peakPairs = Seq.empty
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should have size 0
         }
       }
@@ -155,7 +158,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 6, 1), Peak(0, 0, 2)),
             (Peak(0, 3, 2), Peak(0, 2, 3))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should contain theSameElementsAs Seq(song0 -> Seq(6))
         }
       }
@@ -170,7 +173,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 2, 9), Peak(0, 3, 10)),
             (Peak(0, 2, 11), Peak(0, 3, 12))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should contain theSameElementsAs Seq(
             song1 -> Seq(0, 0, 0, 1),
             song2 -> Seq(1, 1, 2),
@@ -187,7 +190,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 2, 5), Peak(0, 1, 8)),
             (Peak(0, 2, 6), Peak(0, 2, 7))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should contain theSameElementsAs Seq(
             song1 -> Seq(0),
             song2 -> Seq(1, 1),
@@ -203,7 +206,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 2, 3), Peak(0, 0, 4)),
             (Peak(0, 6, 5), Peak(0, 0, 6))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should contain theSameElementsAs Seq(
             song0 -> Seq(2),
             song1 -> Seq(0),
@@ -222,7 +225,7 @@ class MatcherSpec extends FunSpec with Matchers {
             (Peak(0, 1, 2), Peak(0, 3, 3)),
             (Peak(0, 6, 3), Peak(0, 0, 4))
           )
-          val songOffsets = Matcher.peakPairsToSongOffsets(peakPairs, songIndex)
+          val songOffsets = Matcher invokePrivate peakPairsToSongOffsets(peakPairs, songIndex)
           songOffsets should contain theSameElementsAs Seq(
             song0 -> Seq(4),
             song1 -> Seq(4),
@@ -236,10 +239,12 @@ class MatcherSpec extends FunSpec with Matchers {
   }
   
   describe("songConfidenceToMatches") {
+    val songConfidenceToMatches = PrivateMethod[Matches]('songConfidenceToMatches)
+
     describe("when the confidence map is empty") {
       it("should return an empty match list") {
         val songConfidence = SongConfidence()
-        val matches = Matcher.songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
         matches should have size 0
       }
     }
@@ -247,7 +252,7 @@ class MatcherSpec extends FunSpec with Matchers {
     describe("when song 0 has the largest confidence") {
       it("should return a match list with song 0 as first element") {
         val songConfidence = Map(song0 -> 1.0)
-        val matches = Matcher.songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
         matches should contain theSameElementsInOrderAs Seq(Match(song0, 1.0))
       }
     }
@@ -260,7 +265,7 @@ class MatcherSpec extends FunSpec with Matchers {
             song3 -> 0.143,
             song4 -> 0.143
             )
-        val matches = Matcher.songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
         matches should contain theSameElementsInOrderAs Seq(
           Match(song1, 0.429),
           Match(song2, 0.286),
@@ -277,7 +282,7 @@ class MatcherSpec extends FunSpec with Matchers {
             song2 -> 0.5,
             song3 -> 0.25
             )
-        val matches = Matcher.songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
         matches should contain theSameElementsInOrderAs Seq(
           Match(song2, 0.5),
           Match(song1, 0.25),
@@ -295,7 +300,7 @@ class MatcherSpec extends FunSpec with Matchers {
             song3 -> 0.333,
             song4 -> 0.167
             )
-        val matches = Matcher.songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
         matches should contain theSameElementsInOrderAs Seq(
           Match(song3, 0.333),
           Match(song0, 0.167),
@@ -315,7 +320,7 @@ class MatcherSpec extends FunSpec with Matchers {
             song3 -> 0.167,
             song4 -> 0.333
             )
-        val matches = Matcher.songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
         matches should contain theSameElementsInOrderAs Seq(
           Match(song4, 0.333),
           Match(song0, 0.167),
@@ -328,10 +333,12 @@ class MatcherSpec extends FunSpec with Matchers {
   }
 
   describe("songOffsetsToSongConfidence") {
+    val songOffsetsToSongConfidence = PrivateMethod[SongConfidence]('songOffsetsToSongConfidence)
+
     describe("when the offset map is empty") {
       it("should return an empty confidence map") {
         val songOffsets = SongOffsets()
-        val songConfidence = Matcher.songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
         songConfidence should have size 0
       }
     }
@@ -341,7 +348,7 @@ class MatcherSpec extends FunSpec with Matchers {
         val songOffsets = Map(
             song0 -> Seq(0)
             )
-        val songConfidence = Matcher.songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
         songConfidence should have size 1
         songConfidence should contain key (song0)
         songConfidence(song0) should be (1.0 +- EPS)
@@ -356,7 +363,7 @@ class MatcherSpec extends FunSpec with Matchers {
             song3 -> Seq(2, 4),
             song4 -> Seq(5)
             )
-        val songConfidence = Matcher.songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
         songConfidence should have size 4
         songConfidence should contain key (song1)
         songConfidence(song1) should be (0.429 +- EPS)
@@ -376,7 +383,7 @@ class MatcherSpec extends FunSpec with Matchers {
             song2 -> Seq(1, 1),
             song3 -> Seq(4)
             )
-        val songConfidence = Matcher.songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
         songConfidence should have size 3
         songConfidence should contain key (song1)
         songConfidence(song1) should be (0.25 +- EPS)
@@ -396,7 +403,7 @@ class MatcherSpec extends FunSpec with Matchers {
             song3 -> Seq(2, 2),
             song4 -> Seq(5)
             )
-        val songConfidence = Matcher.songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
         songConfidence should have size 5
         songConfidence should contain key (song0)
         songConfidence(song0) should be (0.167 +- EPS)
@@ -420,7 +427,7 @@ class MatcherSpec extends FunSpec with Matchers {
             song3 -> Seq(1),
             song4 -> Seq(4, 4)
             )
-        val songConfidence = Matcher.songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
         songConfidence should have size 5
         songConfidence should contain key (song0)
         songConfidence(song0) should be (0.167 +- EPS)

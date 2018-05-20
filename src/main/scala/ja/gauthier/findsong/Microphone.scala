@@ -6,8 +6,17 @@ import java.io.File
 import java.nio._
 import javax.sound.sampled._
 
+/**
+ * This object accesses the built-in microphone.
+ */
 object Microphone {
-    def extractMicrophoneSignal(nBytes: Int)(implicit settings: Settings): Signal = {
+    /**
+     * Uses the java sound API to make an audio recording with the built-in microphone. The method blocks until settings.Recording.bytesPerCapture are read.
+     *
+     *  @param settings a Settings object containing the options for the app
+     *  @return the recorded signal
+     */
+    def extractMicrophoneSignal(implicit settings: Settings): Signal = {
         val format = AudioFile.getAudioFormat
         val info = new DataLine.Info(classOf[TargetDataLine], format)
         val microphone = AudioSystem.getLine(info).asInstanceOf[TargetDataLine]
@@ -16,7 +25,7 @@ object Microphone {
             microphone.open(format)
             microphone.start()
             microphone.read(signalBytes, 0, settings.Recording.bytesPerCapture)
-            val signalShorts = AudioFile.byteArrayToShortArray(signalBytes, Some(ByteOrder.BIG_ENDIAN))
+            val signalShorts = AudioFile.byteArrayToShortArray(signalBytes)
             signalShorts
         } finally {
             microphone.close()

@@ -3,8 +3,16 @@ package ja.gauthier.findsong.types
 import breeze.linalg._
 import ja.gauthier.findsong.types.debuggable._
 
+/**
+ *  Contains the class / type definitions for spectrograms.
+ */
 package object spectrogram {
     implicit class DebuggableSpectrogram(spectrogram: Spectrogram)(implicit settings: Settings) extends Debuggable {
+        /**
+         *  Dumps the contents of the spectrogram to a file.
+         *
+         *  @param filename the name of the file where the spectrogram will be dumped into
+         */
         def toFile(filename: String): Unit = {
             if (settings.General.debug) {
                 val fileContent = spectrogram
@@ -23,5 +31,8 @@ package object spectrogram {
         }
     }
 
+    /**
+     *  A spectrogram is an array of frequency spectra.
+     */
     type Spectrogram = DenseMatrix[Int]
 }
