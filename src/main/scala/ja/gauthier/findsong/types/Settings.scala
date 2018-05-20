@@ -24,6 +24,7 @@ object Settings {
             val general = findsong.getConfig("general")
             val debug = general.getBoolean("debug")
             val inputFormat = "m4a"
+            val maxMatches = general.getInt("max-matches")
         }
 
         object PeakPairs {
@@ -65,6 +66,7 @@ object Settings {
         fanout: Int = ApplicationConfigArguments.PeakPairs.fanout,
         inputDirectory: String = "",
         inputFormat: String = ApplicationConfigArguments.General.inputFormat,
+        maxMatches: Int = ApplicationConfigArguments.General.maxMatches,
         peakDeltaF: Int = ApplicationConfigArguments.ConstellationMap.peakDeltaF,
         peakDeltaT: Int = ApplicationConfigArguments.ConstellationMap.peakDeltaT,
         peaksPerChunk: Int = ApplicationConfigArguments.ConstellationMap.peaksPerChunk,
@@ -115,6 +117,11 @@ object Settings {
             .action((inputFormat, cliArguments) =>
                 cliArguments.copy(inputFormat = inputFormat))
                     .text("Format of the song files to index")
+
+        opt[Int]("maxMatches")
+            .action((maxMatches, cliArguments) =>
+                cliArguments.copy(maxMatches = maxMatches))
+                    .text(s"Maximal number of matches returned by the search engine (default = ${ApplicationConfigArguments.General.maxMatches})")
 
         opt[Int]("peakDeltaF")
             .action((peakDeltaF, cliArguments) =>
@@ -175,6 +182,7 @@ class Settings(arguments: Settings.CliArguments) {
         val debug = arguments.debug
         val inputDirectory = arguments.inputDirectory
         val inputFormat = arguments.inputFormat
+        val maxMatches = arguments.maxMatches
     }
 
     object PeakPairs {

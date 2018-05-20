@@ -69,10 +69,11 @@ object Matcher {
      *  Returns a sorted list of match scores
      *
      *  @param songConfidence a list of unsorted match scores
+     *  @param settings a Settings object containing the options for the app
      *  @return a list of sorted match scores
      */
-    private def songConfidenceToMatches(songConfidence: SongConfidence): Matches = {
-        val matches = songConfidence.toSeq.map((songConfidence) => Match(songConfidence._1, songConfidence._2)).sorted
+    private def songConfidenceToMatches(songConfidence: SongConfidence)(implicit settings: Settings): Matches = {
+        val matches = songConfidence.toSeq.map((songConfidence) => Match(songConfidence._1, songConfidence._2)).sorted.take(settings.General.maxMatches)
         matches
     }
 

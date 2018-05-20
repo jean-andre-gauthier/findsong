@@ -244,7 +244,7 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
     describe("when the confidence map is empty") {
       it("should return an empty match list") {
         val songConfidence = SongConfidence()
-        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence, s)
         matches should have size 0
       }
     }
@@ -252,7 +252,7 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
     describe("when song 0 has the largest confidence") {
       it("should return a match list with song 0 as first element") {
         val songConfidence = Map(song0 -> 1.0)
-        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence, s)
         matches should contain theSameElementsInOrderAs Seq(Match(song0, 1.0))
       }
     }
@@ -265,7 +265,7 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
             song3 -> 0.143,
             song4 -> 0.143
             )
-        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence, s)
         matches should contain theSameElementsInOrderAs Seq(
           Match(song1, 0.429),
           Match(song2, 0.286),
@@ -282,7 +282,7 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
             song2 -> 0.5,
             song3 -> 0.25
             )
-        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence, s)
         matches should contain theSameElementsInOrderAs Seq(
           Match(song2, 0.5),
           Match(song1, 0.25),
@@ -300,7 +300,7 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
             song3 -> 0.333,
             song4 -> 0.167
             )
-        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence, s)
         matches should contain theSameElementsInOrderAs Seq(
           Match(song3, 0.333),
           Match(song0, 0.167),
@@ -320,7 +320,7 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
             song3 -> 0.167,
             song4 -> 0.333
             )
-        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence)
+        val matches = Matcher invokePrivate songConfidenceToMatches(songConfidence, s)
         matches should contain theSameElementsInOrderAs Seq(
           Match(song4, 0.333),
           Match(song0, 0.167),

@@ -27,6 +27,7 @@ Usage: [options]
                            Directory containing the song files to index
   -f, --inputFormat <format>
                            Format of the song files to index
+  --maxMatches <value>     Maximal number of matches returned by the search engine (default = 5)
   --peakDeltaF <value>     Frequency range in which a spectrogram cell has to be a local maximum to be considered a peak (default = 1)
   --peakDeltaT <value>     Time range in which a spectrogram cell has to be a local maximum to be considered a peak (default = 1)
   --peaksPerChunk <value>  Maximal number of peaks in any given fingerprinting chunk (default = 2)

@@ -33,6 +33,7 @@ import scala.util.Success
  *                           Directory containing the song files to index
  *  -f, --inputFormat <format>
  *                           Format of the song files to index
+ *  --maxMatches <value>     Maximal number of matches returned by the search engine (default = 3)
  *  --peakDeltaF <value>     Frequency range in which a spectrogram cell has to be a local maximum to be considered a peak (default = 1)
  *  --peakDeltaT <value>     Time range in which a spectrogram cell has to be a local maximum to be considered a peak (default = 1)
  *  --peaksPerChunk <value>  Maximal number of peaks in any given fingerprinting chunk (default = 2)
@@ -87,10 +88,13 @@ object FindSong extends App {
                 println("Recording complete")
                 val matches = Matcher.signalToMatches(signal, songIndex)
                 if (matches.size > 0) {
-                    val matchesTable = matches.foldLeft("")((table, songMatch) =>
-                            table + (songMatch.confidence * 100)
-                                + "% - " + songMatch.song.title
-                                + " - " + songMatch.song.artist + "\n")
+                    val colors = Seq(Console.GREEN, Console.YELLOW, Console.RED, Console.WHITE)
+                    val matchesTable = matches.zip(colors).foldLeft("")((table, songMatchColor) => {
+                            val (songMatch, color) = songMatchColor
+                            table + color + (songMatch.confidence * 100) +
+                                "% - " + songMatch.song.title +
+                                " - " + songMatch.song.artist + Console.RESET + "\n"
+                    })
                     println("Found the following matching songs:\n" + matchesTable)
                 } else {
                     println("No matching song found")
