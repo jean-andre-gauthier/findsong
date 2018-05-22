@@ -73,9 +73,9 @@ class IntegrationSpec extends FunSpec with Matchers with PrivateMethodTester {
         val matches = Matcher.signalToMatches(signal, songIndex)
         matches should have length 2
         matches(0).song should be (song1)
-        matches(0).confidence should be (0.75 +- EPS)
+        matches(0).confidence should be (9.967 +- EPS)
         matches(1).song should be (song2)
-        matches(1).confidence should be (0.25 +- EPS)
+        matches(1).confidence should be (3.332 +- EPS)
       }
     }
 
@@ -96,9 +96,9 @@ class IntegrationSpec extends FunSpec with Matchers with PrivateMethodTester {
         val matches = Matcher.signalToMatches(signal, songIndex)
         matches should have length 2
         matches(0).song should be (song1)
-        matches(0).confidence should be (0.8 +- EPS)
+        matches(0).confidence should be (13.255 +- EPS)
         matches(1).song should be (song2)
-        matches(1).confidence should be (0.2 +- EPS)
+        matches(1).confidence should be (3.332 +- EPS)
       }
     }
 
@@ -113,9 +113,9 @@ class IntegrationSpec extends FunSpec with Matchers with PrivateMethodTester {
         val matches1 = Matcher.signalToMatches(signal1, songIndex)
         matches1 should have length 2
         matches1(0).song should be (song1)
-        matches1(0).confidence should be (0.5 +- EPS)
+        matches1(0).confidence should be (3.332 +- EPS)
         matches1(1).song should be (song2)
-        matches1(1).confidence should be (0.5 +- EPS)
+        matches1(1).confidence should be (3.332 +- EPS)
 
         val signal2 = Array[Short](
           0, 17, 10, -3, 0, 3, -10, -17,
@@ -128,9 +128,9 @@ class IntegrationSpec extends FunSpec with Matchers with PrivateMethodTester {
         val matches2 = Matcher.signalToMatches(signal2, songIndex)
         matches2 should have length 2
         matches2(0).song should be (song1)
-        matches2(0).confidence should be (0.5 +- EPS)
+        matches2(0).confidence should be (3.332 +- EPS)
         matches2(1).song should be (song2)
-        matches2(1).confidence should be (0.5 +- EPS)
+        matches2(1).confidence should be (3.332 +- EPS)
       }
     }
   }

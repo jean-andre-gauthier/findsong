@@ -11,7 +11,7 @@ import javax.sound.sampled._
  */
 object Microphone {
     /**
-     * Uses the java sound API to make an audio recording with the built-in microphone. The method blocks until settings.Recording.bytesPerCapture are read.
+     * Uses the java sound API to make an audio recording with the built-in microphone. The method blocks until settings.Recording.samplesPerCapture are read.
      *
      *  @param settings a Settings object containing the options for the app
      *  @return the recorded signal
@@ -21,10 +21,10 @@ object Microphone {
         val info = new DataLine.Info(classOf[TargetDataLine], format)
         val microphone = AudioSystem.getLine(info).asInstanceOf[TargetDataLine]
         try {
-            val signalBytes = new Array[Byte](settings.Recording.bytesPerCapture)
+            val signalBytes = new Array[Byte](settings.Recording.samplesPerCapture * 2)
             microphone.open(format)
             microphone.start()
-            microphone.read(signalBytes, 0, settings.Recording.bytesPerCapture)
+            microphone.read(signalBytes, 0, settings.Recording.samplesPerCapture * 2)
             val signalShorts = AudioFile.byteArrayToShortArray(signalBytes)
             signalShorts
         } finally {

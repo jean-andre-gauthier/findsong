@@ -66,7 +66,7 @@ def writeSignalWav(inputFilenames, nOutputSamples, sampleRate):
     for signalFilename in inputFilenames:
         with open(signalFilename) as signalFile:
             signal = list(map(int, islice(signalFile, nOutputSamples)))
-            scaledSignal = np.int8(signal/np.max(np.abs(signal)) * 257)
+            scaledSignal = np.int8(signal / np.max(np.abs(signal)).astype(float) * 65535)
             scaledSignal.byteswap(True)
             write(signalFilename + ".wav", sampleRate, scaledSignal)
 

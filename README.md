@@ -16,13 +16,9 @@ java -jar findsong_1_0_1.jar -i <directory with audio files> -f <audio format (e
 ```
 Usage: [options]
 
-  --bytesPerCapture <value>
-                           Size of a microphone recording in bytes (default = 80000)
-  --bytesPerChunk <value>  Size of a fingerprinting chunk in bytes (default = 16)
-  --bytesPerChunkStep <value>
-                           Size of the stride between two fingerprinting chunks in bytes (default = 8)
-  --debug <value>          Create intermediate dump files during song fingerprinting and matching (default = false)
+  --debug                  Create intermediate dump files during song fingerprinting and matching (default = false)
   --fanout <value>         Maximal number of peaks that can be paired with any given peak (default = 3)
+  --greenLevel <value>     Threshold for a match score to be displayed in green (default = 25)
   -i, --inputDirectory <directory>
                            Directory containing the song files to index
   -f, --inputFormat <format>
@@ -31,10 +27,19 @@ Usage: [options]
   --peakDeltaF <value>     Frequency range in which a spectrogram cell has to be a local maximum to be considered a peak (default = 1)
   --peakDeltaT <value>     Time range in which a spectrogram cell has to be a local maximum to be considered a peak (default = 1)
   --peaksPerChunk <value>  Maximal number of peaks in any given fingerprinting chunk (default = 2)
+  --samplesPerCapture <value>
+                           Size of a microphone recording in samples (default = 80000)
+  --samplesPerChunk <value>
+                           Size of a fingerprinting chunk in samples (default = 16)
+  --samplesPerChunkStep <value>
+                           Size of the stride between two fingerprinting chunks in samples (default = 8)
   --sampleRate <value>     Fingerprinting / recording sample rate (default = 8000)
+  --scoreCoefficient <value>
+                           Coefficient that is used in the match scoring function (default = 30)
   --windowDeltaF <value>   Frequency range in which neighbouring peaks can be paired up (default = 1)
   --windowDeltaT <value>   Time range in which neighbouring peaks can be paired up (default = 4)
   --windowDeltaTi <value>  Minimal time difference for neighbouring peaks to be paired up (default = 2)
+  --yellowLevel <value>    Threshold for a match score to be displayed in yellow (default = 10)
 ```
 
 ## Contact

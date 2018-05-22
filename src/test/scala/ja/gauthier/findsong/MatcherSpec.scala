@@ -237,7 +237,7 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
       }
     }
   }
-  
+
   describe("songConfidenceToMatches") {
     val songConfidenceToMatches = PrivateMethod[Matches]('songConfidenceToMatches)
 
@@ -338,7 +338,7 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
     describe("when the offset map is empty") {
       it("should return an empty confidence map") {
         val songOffsets = SongOffsets()
-        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets, s)
         songConfidence should have size 0
       }
     }
@@ -348,10 +348,10 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
         val songOffsets = Map(
             song0 -> Seq(0)
             )
-        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets, s)
         songConfidence should have size 1
         songConfidence should contain key (song0)
-        songConfidence(song0) should be (1.0 +- EPS)
+        songConfidence(song0) should be (3.332 +- EPS)
       }
     }
 
@@ -363,16 +363,16 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
             song3 -> Seq(2, 4),
             song4 -> Seq(5)
             )
-        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets, s)
         songConfidence should have size 4
         songConfidence should contain key (song1)
-        songConfidence(song1) should be (0.429 +- EPS)
+        songConfidence(song1) should be (9.967 +- EPS)
         songConfidence should contain key (song2)
-        songConfidence(song2) should be (0.286 +- EPS)
+        songConfidence(song2) should be (6.657 +- EPS)
         songConfidence should contain key (song3)
-        songConfidence(song3) should be (0.143 +- EPS)
+        songConfidence(song3) should be (3.332 +- EPS)
         songConfidence should contain key (song4)
-        songConfidence(song4) should be (0.143 +- EPS)
+        songConfidence(song4) should be (3.332 +- EPS)
       }
     }
 
@@ -383,14 +383,14 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
             song2 -> Seq(1, 1),
             song3 -> Seq(4)
             )
-        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets, s)
         songConfidence should have size 3
         songConfidence should contain key (song1)
-        songConfidence(song1) should be (0.25 +- EPS)
+        songConfidence(song1) should be (3.332 +- EPS)
         songConfidence should contain key (song2)
-        songConfidence(song2) should be (0.5 +- EPS)
+        songConfidence(song2) should be (6.657 +- EPS)
         songConfidence should contain key (song3)
-        songConfidence(song3) should be (0.25 +- EPS)
+        songConfidence(song3) should be (3.332 +- EPS)
       }
     }
 
@@ -403,18 +403,18 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
             song3 -> Seq(2, 2),
             song4 -> Seq(5)
             )
-        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets, s)
         songConfidence should have size 5
         songConfidence should contain key (song0)
-        songConfidence(song0) should be (0.167 +- EPS)
+        songConfidence(song0) should be (3.332 +- EPS)
         songConfidence should contain key (song1)
-        songConfidence(song1) should be (0.167 +- EPS)
+        songConfidence(song1) should be (3.332 +- EPS)
         songConfidence should contain key (song2)
-        songConfidence(song2) should be (0.167 +- EPS)
+        songConfidence(song2) should be (3.332 +- EPS)
         songConfidence should contain key (song3)
-        songConfidence(song3) should be (0.333 +- EPS)
+        songConfidence(song3) should be (6.657 +- EPS)
         songConfidence should contain key (song4)
-        songConfidence(song4) should be (0.167 +- EPS)
+        songConfidence(song4) should be (3.332 +- EPS)
       }
     }
 
@@ -427,18 +427,18 @@ class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
             song3 -> Seq(1),
             song4 -> Seq(4, 4)
             )
-        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets)
+        val songConfidence = Matcher invokePrivate songOffsetsToSongConfidence(songOffsets, s)
         songConfidence should have size 5
         songConfidence should contain key (song0)
-        songConfidence(song0) should be (0.167 +- EPS)
+        songConfidence(song0) should be (3.332 +- EPS)
         songConfidence should contain key (song1)
-        songConfidence(song1) should be (0.167 +- EPS)
+        songConfidence(song1) should be (3.332 +- EPS)
         songConfidence should contain key (song2)
-        songConfidence(song2) should be (0.167 +- EPS)
+        songConfidence(song2) should be (3.332 +- EPS)
         songConfidence should contain key (song3)
-        songConfidence(song3) should be (0.167 +- EPS)
+        songConfidence(song3) should be (3.332 +- EPS)
         songConfidence should contain key (song4)
-        songConfidence(song4) should be (0.333 +- EPS)
+        songConfidence(song4) should be (6.657 +- EPS)
       }
     }
   }

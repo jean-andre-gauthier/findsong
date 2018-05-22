@@ -140,12 +140,12 @@ object Fingerprinter {
         val raggedChunks = signal
             .map(_.toDouble)
             .sliding(
-                settings.Spectrogram.bytesPerChunk,
-                settings.Spectrogram.bytesPerChunkStep)
+                settings.Spectrogram.samplesPerChunk,
+                settings.Spectrogram.samplesPerChunkStep)
             .toArray
         val chunks = if (
             raggedChunks.size > 0
-            && raggedChunks.last.size != settings.Spectrogram.bytesPerChunk) {
+            && raggedChunks.last.size != settings.Spectrogram.samplesPerChunk) {
             raggedChunks.init
         } else {
             raggedChunks

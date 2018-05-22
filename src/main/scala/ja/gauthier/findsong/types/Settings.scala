@@ -24,7 +24,14 @@ object Settings {
             val general = findsong.getConfig("general")
             val debug = general.getBoolean("debug")
             val inputFormat = "m4a"
-            val maxMatches = general.getInt("max-matches")
+        }
+
+        object Matching {
+            val matching = findsong.getConfig("matching")
+            val greenLevel = matching.getInt("green-level")
+            val maxMatches = matching.getInt("max-matches")
+            val scoreCoefficient = matching.getInt("score-coefficient")
+            val yellowLevel = matching.getInt("yellow-level")
         }
 
         object PeakPairs {
@@ -38,61 +45,49 @@ object Settings {
         object Preprocessing {
             val preprocessing = findsong.getConfig("preprocessing")
             val bigEndian = false
-            val bitsPerSample = 8
+            val bitsPerSample = 16
             val channels = 1
-            val codec = "pcm_u8"
-            val intermediateFormat = "u8"
+            val codec = "pcm_s16le"
+            val intermediateFormat = "wav"
             val sampleRate = preprocessing.getInt("sample-rate")
             val signed = true
         }
 
         object Recording {
             val recording = findsong.getConfig("recording")
-            val bytesPerCapture = recording.getInt("bytes-per-capture")
+            val samplesPerCapture = recording.getInt("samples-per-capture")
         }
 
         object Spectrogram {
             val spectrogram = findsong.getConfig("spectrogram")
-            val bytesPerChunk = spectrogram.getInt("bytes-per-chunk")
-            val bytesPerChunkStep = spectrogram.getInt("bytes-per-chunk-step")
+            val samplesPerChunk = spectrogram.getInt("samples-per-chunk")
+            val samplesPerChunkStep = spectrogram.getInt("samples-per-chunk-step")
         }
     }
 
     case class CliArguments(
-        bytesPerCapture: Int = ApplicationConfigArguments.Recording.bytesPerCapture,
-        bytesPerChunk: Int = ApplicationConfigArguments.Spectrogram.bytesPerChunk,
-        bytesPerChunkStep: Int = ApplicationConfigArguments.Spectrogram.bytesPerChunkStep,
         debug: Boolean = ApplicationConfigArguments.General.debug,
         fanout: Int = ApplicationConfigArguments.PeakPairs.fanout,
+        greenLevel: Int = ApplicationConfigArguments.Matching.greenLevel,
         inputDirectory: String = "",
         inputFormat: String = ApplicationConfigArguments.General.inputFormat,
-        maxMatches: Int = ApplicationConfigArguments.General.maxMatches,
+        maxMatches: Int = ApplicationConfigArguments.Matching.maxMatches,
         peakDeltaF: Int = ApplicationConfigArguments.ConstellationMap.peakDeltaF,
         peakDeltaT: Int = ApplicationConfigArguments.ConstellationMap.peakDeltaT,
         peaksPerChunk: Int = ApplicationConfigArguments.ConstellationMap.peaksPerChunk,
+        samplesPerCapture: Int = ApplicationConfigArguments.Recording.samplesPerCapture,
+        samplesPerChunk: Int = ApplicationConfigArguments.Spectrogram.samplesPerChunk,
+        samplesPerChunkStep: Int = ApplicationConfigArguments.Spectrogram.samplesPerChunkStep,
         sampleRate: Int = ApplicationConfigArguments.Preprocessing.sampleRate,
+        scoreCoefficient: Int = ApplicationConfigArguments.Matching.scoreCoefficient,
         windowDeltaF: Int = ApplicationConfigArguments.PeakPairs.windowDeltaF,
         windowDeltaT: Int = ApplicationConfigArguments.PeakPairs.windowDeltaT,
-        windowDeltaTi: Int = ApplicationConfigArguments.PeakPairs.windowDeltaTi
+        windowDeltaTi: Int = ApplicationConfigArguments.PeakPairs.windowDeltaTi,
+        yellowLevel: Int = ApplicationConfigArguments.Matching.yellowLevel
     )
 
     val argumentsParser = new scopt.OptionParser[CliArguments]("") {
         head("findsong", "1.0.1")
-
-        opt[Int]("bytesPerCapture")
-            .action((bytesPerCapture, cliArguments) =>
-                cliArguments.copy(bytesPerCapture = bytesPerCapture))
-            .text(s"Size of a microphone recording in bytes (default = ${ApplicationConfigArguments.Recording.bytesPerCapture})")
-
-        opt[Int]("bytesPerChunk")
-            .action((bytesPerChunk, cliArguments) =>
-                cliArguments.copy(bytesPerChunk = bytesPerChunk))
-                    .text(s"Size of a fingerprinting chunk in bytes (default = ${ApplicationConfigArguments.Spectrogram.bytesPerChunk})")
-
-        opt[Int]("bytesPerChunkStep")
-            .action((bytesPerChunkStep, cliArguments) =>
-                cliArguments.copy(bytesPerChunkStep = bytesPerChunkStep))
-                    .text(s"Size of the stride between two fingerprinting chunks in bytes (default = ${ApplicationConfigArguments.Spectrogram.bytesPerChunkStep})")
 
         opt[Unit]("debug")
             .action((debug, cliArguments) =>
@@ -103,6 +98,11 @@ object Settings {
             .action((fanout, cliArguments) =>
                 cliArguments.copy(fanout = fanout))
                     .text(s"Maximal number of peaks that can be paired with any given peak (default = ${ApplicationConfigArguments.PeakPairs.fanout})")
+
+        opt[Int]("greenLevel")
+            .action((greenLevel, cliArguments) =>
+                cliArguments.copy(greenLevel = greenLevel))
+                    .text(s"Threshold for a match score to be displayed in green (default = ${ApplicationConfigArguments.Matching.greenLevel})")
 
         opt[String]('i', "inputDirectory")
             .required()
@@ -121,7 +121,7 @@ object Settings {
         opt[Int]("maxMatches")
             .action((maxMatches, cliArguments) =>
                 cliArguments.copy(maxMatches = maxMatches))
-                    .text(s"Maximal number of matches returned by the search engine (default = ${ApplicationConfigArguments.General.maxMatches})")
+                    .text(s"Maximal number of matches returned by the search engine (default = ${ApplicationConfigArguments.Matching.maxMatches})")
 
         opt[Int]("peakDeltaF")
             .action((peakDeltaF, cliArguments) =>
@@ -138,10 +138,30 @@ object Settings {
                 cliArguments.copy(peaksPerChunk = peaksPerChunk))
                     .text(s"Maximal number of peaks in any given fingerprinting chunk (default = ${ApplicationConfigArguments.ConstellationMap.peaksPerChunk})")
 
+        opt[Int]("samplesPerCapture")
+            .action((samplesPerCapture, cliArguments) =>
+                cliArguments.copy(samplesPerCapture = samplesPerCapture))
+            .text(s"Size of a microphone recording in samples (default = ${ApplicationConfigArguments.Recording.samplesPerCapture})")
+
+        opt[Int]("samplesPerChunk")
+            .action((samplesPerChunk, cliArguments) =>
+                cliArguments.copy(samplesPerChunk = samplesPerChunk))
+                    .text(s"Size of a fingerprinting chunk in samples (default = ${ApplicationConfigArguments.Spectrogram.samplesPerChunk})")
+
+        opt[Int]("samplesPerChunkStep")
+            .action((samplesPerChunkStep, cliArguments) =>
+                cliArguments.copy(samplesPerChunkStep = samplesPerChunkStep))
+                    .text(s"Size of the stride between two fingerprinting chunks in samples (default = ${ApplicationConfigArguments.Spectrogram.samplesPerChunkStep})")
+
         opt[Int]("sampleRate")
             .action((sampleRate, cliArguments) =>
                 cliArguments.copy(sampleRate = sampleRate))
                     .text(s"Fingerprinting / recording sample rate (default = ${ApplicationConfigArguments.Preprocessing.sampleRate})")
+
+        opt[Int]("scoreCoefficient")
+            .action((scoreCoefficient, cliArguments) =>
+                cliArguments.copy(scoreCoefficient = scoreCoefficient))
+                    .text(s"Coefficient that is used in the match scoring function (default = ${ApplicationConfigArguments.Matching.scoreCoefficient})")
 
         opt[Int]("windowDeltaF")
             .action((windowDeltaF, cliArguments) =>
@@ -157,6 +177,11 @@ object Settings {
             .action((windowDeltaTi, cliArguments) =>
                 cliArguments.copy(windowDeltaTi = windowDeltaTi))
                     .text(s"Minimal time difference for neighbouring peaks to be paired up (default = ${ApplicationConfigArguments.PeakPairs.windowDeltaTi})")
+
+        opt[Int]("yellowLevel")
+            .action((yellowLevel, cliArguments) =>
+                cliArguments.copy(yellowLevel = yellowLevel))
+                    .text(s"Threshold for a match score to be displayed in yellow (default = ${ApplicationConfigArguments.Matching.yellowLevel})")
     }
 
     /**
@@ -182,7 +207,13 @@ class Settings(arguments: Settings.CliArguments) {
         val debug = arguments.debug
         val inputDirectory = arguments.inputDirectory
         val inputFormat = arguments.inputFormat
+    }
+
+    object Matching {
+        val greenLevel = arguments.greenLevel
         val maxMatches = arguments.maxMatches
+        val scoreCoefficient = arguments.scoreCoefficient
+        val yellowLevel = arguments.yellowLevel
     }
 
     object PeakPairs {
@@ -194,20 +225,20 @@ class Settings(arguments: Settings.CliArguments) {
 
     object Preprocessing {
         val bigEndian = false
-        val bitsPerSample = 8
+        val bitsPerSample = 16
         val channels = 1
-        val codec = "pcm_u8"
-        val intermediateFormat = "u8"
+        val codec = "pcm_s16le"
+        val intermediateFormat = "wav"
         val sampleRate = arguments.sampleRate
         val signed = true
     }
 
     object Recording {
-        val bytesPerCapture = arguments.bytesPerCapture
+        val samplesPerCapture = arguments.samplesPerCapture
     }
 
     object Spectrogram {
-        val bytesPerChunk = arguments.bytesPerChunk
-        val bytesPerChunkStep = arguments.bytesPerChunkStep
+        val samplesPerChunk = arguments.samplesPerChunk
+        val samplesPerChunkStep = arguments.samplesPerChunkStep
     }
 }

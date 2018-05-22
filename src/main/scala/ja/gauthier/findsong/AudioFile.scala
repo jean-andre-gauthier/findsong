@@ -27,7 +27,9 @@ object AudioFile {
      *  @return an array of Shorts
      */
     def byteArrayToShortArray(bytes: Array[Byte]): Array[Short] = {
-        bytes.map((byte: Byte) => (byte & 0xFF).toShort)
+        val shorts = new Array[Short](bytes.length / 2)
+        ByteBuffer.wrap(bytes).order(ByteOrder.LITTLE_ENDIAN).asShortBuffer().get(shorts)
+        shorts
     }
 
     /**

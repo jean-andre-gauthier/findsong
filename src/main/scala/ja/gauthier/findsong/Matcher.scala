@@ -1,5 +1,7 @@
 package ja.gauthier.findsong
 
+import breeze.linalg._
+import breeze.stats._
 import ja.gauthier.findsong.types.matchPackage._
 import ja.gauthier.findsong.types.matches._
 import ja.gauthier.findsong.types.peakPairs._
@@ -73,25 +75,26 @@ object Matcher {
      *  @return a list of sorted match scores
      */
     private def songConfidenceToMatches(songConfidence: SongConfidence)(implicit settings: Settings): Matches = {
-        val matches = songConfidence.toSeq.map((songConfidence) => Match(songConfidence._1, songConfidence._2)).sorted.take(settings.General.maxMatches)
+        val matches = songConfidence.toSeq.map((songConfidence) =>
+                Match(songConfidence._1, songConfidence._2)).sorted.take(settings.Matching.maxMatches)
         matches
     }
 
     /**
-     *  Returns a list of match scores for a song offset map. A song's match score is the mode of its offset divided by the sum of all modes.
+     *  Returns a list of match scores for a song offset map. A song's match score is the hyperbolic tangent of the mode of its offsets.
      *
      *  @param songOffsets the song offset map
      *  @return a list of match scores
      */
-    private def songOffsetsToSongConfidence(songOffsets: SongOffsets): SongConfidence = {
-        val songToMaxOffsetOccurrence = songOffsets
-            .foldLeft(Map[Song, Int]())((songToMaxOffsetOccurrenceMap, songOffsetsPair) => {
+    private def songOffsetsToSongConfidence(songOffsets: SongOffsets)(implicit settings: Settings): SongConfidence = {
+        val songConfidence = songOffsets
+            .foldLeft(Map[Song, Double]())((songToMaxOffsetOccurrenceMap, songOffsetsPair) => {
+                val offsets = convert(new DenseVector(songOffsetsPair._2.toArray), Double)
+                val offsetsMode = mode(offsets).frequency
+                val score = math.tanh(offsetsMode / settings.Matching.scoreCoefficient.toDouble) * 100
                 songToMaxOffsetOccurrenceMap + (
-                    songOffsetsPair._1 -> songOffsetsPair._2.groupBy(identity).mapValues(_.size).maxBy(_._2)._2)
+                    songOffsetsPair._1 -> score)
             })
-        val totalOccurrences = songToMaxOffsetOccurrence.foldLeft(0)((occurrences, songMaxOffsetOccurrencePair) =>
-            occurrences + songMaxOffsetOccurrencePair._2)
-        val songConfidence = songToMaxOffsetOccurrence.mapValues(_ / totalOccurrences.toDouble)
         songConfidence
     }
 }
