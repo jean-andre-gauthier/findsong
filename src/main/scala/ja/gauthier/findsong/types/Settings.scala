@@ -23,7 +23,6 @@ object Settings {
         object General {
             val general = findsong.getConfig("general")
             val debug = general.getBoolean("debug")
-            val inputFormat = "m4a"
         }
 
         object Matching {
@@ -69,8 +68,8 @@ object Settings {
         debug: Boolean = ApplicationConfigArguments.General.debug,
         fanout: Int = ApplicationConfigArguments.PeakPairs.fanout,
         greenLevel: Int = ApplicationConfigArguments.Matching.greenLevel,
-        inputDirectory: String = "",
-        inputFormat: String = ApplicationConfigArguments.General.inputFormat,
+        indexerGlob: String = "",
+        matcherGlob: Option[String] = None,
         maxMatches: Int = ApplicationConfigArguments.Matching.maxMatches,
         peakDeltaF: Int = ApplicationConfigArguments.ConstellationMap.peakDeltaF,
         peakDeltaT: Int = ApplicationConfigArguments.ConstellationMap.peakDeltaT,
@@ -104,19 +103,18 @@ object Settings {
                 cliArguments.copy(greenLevel = greenLevel))
                     .text(s"Threshold for a match score to be displayed in green (default = ${ApplicationConfigArguments.Matching.greenLevel})")
 
-        opt[String]('i', "inputDirectory")
+        opt[String]('i', "indexerGlob")
             .required()
-            .valueName("<directory>")
-            .action((inputDirectory, cliArguments) =>
-                cliArguments.copy(inputDirectory = inputDirectory))
-                    .text("Directory containing the song files to index")
+            .valueName("<glob>")
+            .action((indexerGlob, cliArguments) =>
+                cliArguments.copy(indexerGlob = indexerGlob))
+                    .text("Glob for the song files to index")
 
-        opt[String]('f', "inputFormat")
-            .required()
-            .valueName("<format>")
-            .action((inputFormat, cliArguments) =>
-                cliArguments.copy(inputFormat = inputFormat))
-                    .text("Format of the song files to index")
+        opt[String]('m', "matcherGlob")
+            .valueName("<glob>")
+            .action((matcherGlob, cliArguments) =>
+                cliArguments.copy(matcherGlob = Option(matcherGlob).filter(_.trim.nonEmpty)))
+                    .text("If present, the clip files matching the glob are used instead of the microphone")
 
         opt[Int]("maxMatches")
             .action((maxMatches, cliArguments) =>
@@ -205,8 +203,8 @@ class Settings(arguments: Settings.CliArguments) {
 
     object General {
         val debug = arguments.debug
-        val inputDirectory = arguments.inputDirectory
-        val inputFormat = arguments.inputFormat
+        val indexerGlob = arguments.indexerGlob
+        val matcherGlob = arguments.matcherGlob
     }
 
     object Matching {

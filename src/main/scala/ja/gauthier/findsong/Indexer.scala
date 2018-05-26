@@ -13,19 +13,17 @@ import scala.collection.JavaConverters._
  */
 object Indexer {
     /**
-     *  Creates a song index for the files with format settings.General.inputFormat in the directory settings.General.inputDirectory.
+     *  Creates a song index for the files that match settings.General.indexerGlob.
      *
      *  @param executionContext an executionContext for the indexing operations
      *  @param settings a Settings object containing the options for the app
      *  @return a future that completes once all songs are indexed
      */
     def indexSongs(implicit executionContext: ExecutionContext, settings: Settings): Future[SongIndex] = {
-        val directoryFile = new File(settings.General.inputDirectory)
-        val songFiles = FileUtils
-            .listFiles(directoryFile, Array(settings.General.inputFormat), true)
-            .asScala
-            .toSeq
-            .to[collection.immutable.Seq]
+        val songFiles = Glob
+            .getMatchingFiles(settings.General.indexerGlob)
+            .toIterable
+            .to[scala.collection.immutable.Iterable]
         Future
             .foldLeft(songFiles.map((songFile: File) => Future {
                 val signal = AudioFile.extractFileSignal(songFile.getCanonicalPath())

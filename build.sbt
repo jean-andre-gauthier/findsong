@@ -7,7 +7,7 @@ lazy val root = (project in file(".")).
     inThisBuild(List(
       organization := "ja.gauthier",
       scalaVersion := "2.12.3",
-      version      := "0.1.0-SNAPSHOT"
+      version      := "1.0.1-SNAPSHOT"
     )),
     javaOptions in run ++= Seq("-Xmx2G"),
     name := "findsong",

@@ -13,7 +13,7 @@ import ja.gauthier.findsong.types.songOffsets._
 import ja.gauthier.findsong.types._
 
 class MatcherSpec extends FunSpec with Matchers with PrivateMethodTester {
-  implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
+  implicit val s = Settings.settings(Array("--indexerGlob", "*.mp4")).get
 
   val EPS = 0.001
 

@@ -16,7 +16,7 @@ import ja.gauthier.findsong.types.spectrogram._
 import ja.gauthier.findsong.types._
 
 class FingerprinterSpec extends FunSpec with Matchers with PrivateMethodTester {
-  implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
+  implicit val s = Settings.settings(Array("--indexerGlob", "*.mp4")).get
 
   describe("constellationMapToPeakPairs") {
     val constellationMapToPeakPairs = PrivateMethod[PeakPairs]('constellationMapToPeakPairs)

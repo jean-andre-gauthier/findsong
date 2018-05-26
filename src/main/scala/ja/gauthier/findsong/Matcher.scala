@@ -18,6 +18,32 @@ import java.time.LocalDateTime
  */
 object Matcher {
     /**
+     *  Returns a statistics table for song matches.
+     *
+     *  @param matches the song matches to be included in the table
+     *  @param settings a Settings object containing the options for the app
+     *  @return a match statistics table that summarises the confidence of the matches
+     */
+    def getMatchesStatistics(matches: Matches)(implicit settings: Settings): Option[String] = {
+        if (matches.size > 0) {
+            val colors = Seq(Console.GREEN, Console.YELLOW, Console.RED, Console.WHITE)
+            val matchesTable = matches.foldLeft("")((table, songMatch) => {
+                    val score = math.round(songMatch.confidence)
+                    val color =
+                        if (score >= settings.Matching.greenLevel) Console.GREEN
+                        else if (score >= settings.Matching.yellowLevel) Console.YELLOW
+                        else Console.RED
+                    table + color + score + " / 100" +
+                        " - " + songMatch.song.title +
+                        " - " + songMatch.song.artist + Console.RESET + "\n"
+            })
+            Some(matchesTable)
+        } else {
+            None
+        }
+    }
+
+    /**
      *  Iterates through the peak pairs and looks up the song index, in order to retrieve the matching songs and the offsets at which the matches occurred.
      *
      *  @param peakPairs the peak pairs for which matches have to be computed

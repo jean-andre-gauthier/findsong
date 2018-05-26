@@ -8,8 +8,8 @@ import java.io._
 import org.scalatest._
 
 class AudioFileSpec extends FunSpec with Matchers {
-  val testFile = "./src/test/resources/test.m4a"
-  implicit val s = Settings.settings(Array("--inputDirectory", ".", "--inputFormat", "m4a")).get
+  val testFile = "./src/test/resources/song_1.mp4"
+  implicit val s = Settings.settings(Array("--indexerGlob", "*.mp4")).get
 
   describe("extractSongMetadata") {
     it("should extract the song's metadata") {
@@ -26,7 +26,7 @@ class AudioFileSpec extends FunSpec with Matchers {
   describe("extractFileSignal") {
     it("should extract the song's audio signal") {
       val signal = AudioFile.extractFileSignal(testFile)
-      signal.length shouldBe 112845
+      signal.length shouldBe 168947
     }
   }
 }

@@ -7,8 +7,14 @@ A proof of concept for a song search engine. Once the engine has indexed the aud
 
 ## Basic usage
 
+Microphone mode:
 ```
-java -jar findsong_1_0_1.jar -i <directory with audio files> -f <audio format (e.g. m4a)>
+java -jar findsong_1_0_1.jar -i <glob for files to index>
+```
+
+Use audio clips instead of microphone:
+```
+java -jar findsong_1_0_1.jar -i <glob for files to index> -m <glob for recordings>
 ```
 
 ## Complete list of options
@@ -19,10 +25,10 @@ Usage: [options]
   --debug                  Create intermediate dump files during song fingerprinting and matching (default = false)
   --fanout <value>         Maximal number of peaks that can be paired with any given peak (default = 3)
   --greenLevel <value>     Threshold for a match score to be displayed in green (default = 25)
-  -i, --inputDirectory <directory>
-                           Directory containing the song files to index
-  -f, --inputFormat <format>
-                           Format of the song files to index
+  -i, --indexerGlob <glob>
+                           Glob for the song files to index
+  -m, --matcherGlob <glob>
+                           If present, the clip files matching the glob are used instead of the microphone
   --maxMatches <value>     Maximal number of matches returned by the search engine (default = 5)
   --peakDeltaF <value>     Frequency range in which a spectrogram cell has to be a local maximum to be considered a peak (default = 1)
   --peakDeltaT <value>     Time range in which a spectrogram cell has to be a local maximum to be considered a peak (default = 1)

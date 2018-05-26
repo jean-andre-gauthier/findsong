@@ -1,3 +1,0 @@
-# findsong
-
-Put your sound files here...

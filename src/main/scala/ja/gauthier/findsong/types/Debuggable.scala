@@ -1,6 +1,6 @@
 package ja.gauthier.findsong.types
 
-import java.io.File
+import java.nio.file.Paths
 import java.nio.charset.StandardCharsets
 import org.apache.commons.io.FileUtils
 
@@ -24,7 +24,7 @@ package object debuggable {
          */
         def writeStringToFile(filename: String, fileContent: String): Unit = {
             FileUtils.writeStringToFile(
-                new File("debug", filename + ".txt"),
+                Paths.get("analyses", "debug", filename + ".txt").toFile,
                 fileContent,
                 StandardCharsets.UTF_8)
         }

@@ -121,7 +121,7 @@ object AudioFile {
 
     /**
      *  Replaces the extension in the input file name by the provided extension.
-     *  
+     *
      *  @param file the input file name
      *  @param extension the new extension
      *  @return the input file name with the new extension

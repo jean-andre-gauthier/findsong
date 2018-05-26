@@ -143,14 +143,12 @@ $RECYCLE.BIN/
 *.lnk
 
 # Findsong
-debug/**/*.txt
-debug/**/*.png
-debug/**/*.wav
-!src/test/resources/*.m4a
+analyses/dumps/*
+analyses/dumps/visualise.py
+analyses/library/*
+analyses/library/README.MD
+!src/test/resources/*.mp4
 src/test/resources/*.txt
 src/test/resources/*.wav
-samples/**/*.m4a
-samples/**/*.txt
-samples/**/*.wav
 
 # End of https://www.gitignore.io/api/sbt,vim,java,scala,audio,linux,video,macos,windows

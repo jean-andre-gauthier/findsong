@@ -5,7 +5,7 @@ import ja.gauthier.findsong.types.debuggable._
 /**
  *  Contains the class / type definitions for signals.
  */
-object signal {
+package object signal {
     implicit class DebuggableSignal(signal: Signal)(implicit settings: Settings) extends Debuggable {
         /**
          *  Dumps the contents of the signal to a file.
