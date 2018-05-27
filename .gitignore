@@ -144,11 +144,11 @@ $RECYCLE.BIN/
 
 # Findsong
 analyses/dumps/*
-analyses/dumps/visualise.py
+!analyses/dumps/**/*.py
 analyses/library/*
-analyses/library/README.MD
-!src/test/resources/*.mp4
+!analyses/library/**/*.MD
 src/test/resources/*.txt
 src/test/resources/*.wav
+!src/test/resources/*.mp4
 
 # End of https://www.gitignore.io/api/sbt,vim,java,scala,audio,linux,video,macos,windows
