@@ -50,6 +50,12 @@ Usage: [options]
 
 ## Contact
 
-* Follow me on [![Github](http://i.imgur.com/9I6NRUm.png "Github")][https://github.com/jean-andre-gauthier]
-* Follow me on [![Twitter](http://i.imgur.com/wWzX9uB.png "Twitter")][https://twitter.com/jandre_gauthier]
-* Visit [jean-andre-gauthier.com][https://jean-andre-gauthier.com]
+* Follow me on [![Github][1.1]][1]
+* Follow me on [![Twitter][2.1]][2]
+* Visit [jean-andre-gauthier.com](https://jean-andre-gauthier.com)
+
+[1.1]: http://i.imgur.com/9I6NRUm.png
+[2.1]: http://i.imgur.com/wWzX9uB.png
+
+[1]: https://github.com/jean-andre-gauthier
+[2]: https://twitter.com/_jagauthier
