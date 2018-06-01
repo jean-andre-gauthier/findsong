@@ -51,6 +51,7 @@ import scala.util.Success
  *
  */
 object FindSong extends App {
+    println("findsong 1.0.1")
     Settings.settings(args) match {
         case Some(settings) =>
             implicit val executionContext = ExecutionContext.fromExecutor(
@@ -79,7 +80,8 @@ object FindSong extends App {
                 case Success(songIndex) =>
                     val indexerEnd = System.nanoTime()
                     val indexerDuration = TimeUnit.NANOSECONDS.toMillis(indexerEnd - indexerStart)
-                    println(s"Indexing completed in ${indexerDuration} ms")
+                    val indexSize = songIndex.foldLeft(0)((acc: Int, keyValue: (SongIndexKey, Seq[SongIndexValue])) => acc + keyValue._2.size)
+                    println(s"Indexing completed in ${indexerDuration} ms. Index contains ${indexSize} fingerprints")
                     recordLoop(songIndex)
                     Success(0)
                 case Failure(exception) =>
