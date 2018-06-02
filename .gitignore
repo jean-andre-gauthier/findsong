@@ -147,6 +147,7 @@ analyses/dumps/*
 !analyses/dumps/**/*.py
 analyses/library/*
 !analyses/library/**/*.MD
+!bin/*.jar
 src/test/resources/*.txt
 src/test/resources/*.wav
 !src/test/resources/*.mp4
