@@ -28,6 +28,7 @@ dependencies:
 - xz=5.2.3=0
 - zlib=1.2.11=0
 - pip:
+  - ffmpeg-python==0.1.12
   - future==0.16.0
   - kiwisolver==1.0.1
 prefix: /Users/gaj/anaconda/envs/findsong-analyses
