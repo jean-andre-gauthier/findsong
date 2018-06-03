@@ -32,8 +32,8 @@ def main():
 
       outputBasename = os.path.basename(inputFilename)
       filename, extension = os.path.splitext(outputBasename)
-      outputFilename = os.path.join(args.outputfolderpath, filename + "_clip" +
-        extension)
+      outputFilename = os.path.join(args.outputfolderpath, filename.encode(
+        "ascii", "replace") + "_clip" + extension)
 
       ffmpeg.input(inputFilename, t=args.length, ss=args.offset).filter_(
         "dynaudnorm").output(outputFilename).run()
