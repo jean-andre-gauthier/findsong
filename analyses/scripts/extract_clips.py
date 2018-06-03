@@ -23,6 +23,7 @@ def main():
       type=str)
     args = parser.parse_args()
 
+    os.mkdir(args.outputfolderpath)
     currentLimitFiles = 0
     for inputFilename in glob(args.inputfilesglob):
       currentLimitFiles += 1
@@ -30,7 +31,6 @@ def main():
         break;
 
       outputBasename = os.path.basename(inputFilename)
-      os.mkdir(args.outputfolderpath)
       filename, extension = os.path.splitext(outputBasename)
       outputFilename = os.path.join(args.outputfolderpath, filename + "_clip" +
         extension)
