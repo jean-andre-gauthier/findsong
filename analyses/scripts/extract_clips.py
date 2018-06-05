@@ -5,6 +5,8 @@
 import argparse
 import ffmpeg
 import os
+import random
+import string
 from glob import glob
 
 def main():
@@ -23,20 +25,40 @@ def main():
       type=str)
     args = parser.parse_args()
 
+    if os.path.exists(args.outputfolderpath):
+        print(f"Error: {args.outputfolderpath} already exists")
+        exit(1)
+
     os.mkdir(args.outputfolderpath)
-    currentLimitFiles = 0
-    for inputFilename in glob(args.inputfilesglob):
-      currentLimitFiles += 1
-      if args.limitfiles == -1 or currentLimitFiles > args.limitfiles:
-        break;
 
-      outputBasename = os.path.basename(inputFilename)
-      filename, extension = os.path.splitext(outputBasename)
-      outputFilename = os.path.join(args.outputfolderpath, filename.encode(
-        "ascii", "replace") + "_clip" + extension)
+    currentLimitFiles = 1
+    pathsFilename = os.path.join(args.outputfolderpath, "paths")
+    printable = set(string.printable)
 
-      ffmpeg.input(inputFilename, t=args.length, ss=args.offset).filter_(
-        "dynaudnorm").output(outputFilename).run()
+    with open(pathsFilename, "w") as pathsFile:
+      shuffledGlob = glob(args.inputfilesglob, recursive=True)
+      for inputFilename in shuffledGlob:
+        absoluteInputFilename = os.path.abspath(inputFilename)
 
-if __name__ == '__main__':
+        if args.limitfiles == -1 or currentLimitFiles <= args.limitfiles:
+          outputBasename = os.path.basename(inputFilename)
+          filename, extension = os.path.splitext(outputBasename)
+          outputFilename = os.path.join(args.outputfolderpath, filename
+            + "_clip_noiseless" + extension)
+
+          if not os.path.isfile(outputFilename):
+            try:
+              ffmpeg.input(inputFilename, t=args.length, ss=args.offset).filter_(
+                "dynaudnorm").output(outputFilename).run()
+
+              pathsFile.write(absoluteInputFilename + "\n")
+              currentLimitFiles += 1
+            except KeyboardInterrupt:
+              break
+            except:
+              pass
+
+      print(f"{currentLimitFiles-1} clips exported")
+
+if __name__ == "__main__":
     main()
