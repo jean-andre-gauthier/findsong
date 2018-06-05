@@ -36,8 +36,9 @@ def main():
     printable = set(string.printable)
 
     with open(pathsFilename, "w") as pathsFile:
-      shuffledGlob = glob(args.inputfilesglob, recursive=True)
-      for inputFilename in shuffledGlob:
+      inputFiles = glob(args.inputfilesglob, recursive=True)
+      random.shuffle(inputFiles)
+      for inputFilename in inputFiles:
         absoluteInputFilename = os.path.abspath(inputFilename)
 
         if args.limitfiles == -1 or currentLimitFiles <= args.limitfiles:
