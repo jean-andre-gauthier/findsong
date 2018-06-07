@@ -45,7 +45,7 @@ def main():
           outputBasename = os.path.basename(inputFilename)
           filename, extension = os.path.splitext(outputBasename)
           outputFilename = os.path.join(args.outputfolderpath, filename
-            + "_clip_noiseless" + extension)
+            + extension)
 
           if not os.path.isfile(outputFilename):
             try:
