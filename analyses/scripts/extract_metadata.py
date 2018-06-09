@@ -7,16 +7,21 @@ import os
 import re
 import subprocess
 
+
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--metadatakey", help="ffprobe metadata key",
-      required=True, type=str)
-    parser.add_argument("--pathsfilepath",
-      help="file containing paths to the files to process (path)",
-      required=True, type=str)
-    parser.add_argument("--outputfilepath",
-      help="file where to store the metadata (path)",
-      required=True, type=str)
+    parser.add_argument(
+        "--metadatakey", help="ffprobe metadata key", required=True, type=str)
+    parser.add_argument(
+        "--pathsfilepath",
+        help="file containing paths to the files to process (path)",
+        required=True,
+        type=str)
+    parser.add_argument(
+        "--outputfilepath",
+        help="file where to store the metadata (path)",
+        required=True,
+        type=str)
     args = parser.parse_args()
 
     if not os.path.exists(args.pathsfilepath):
@@ -37,14 +42,16 @@ def main():
                 print(f"Error: {path} does not exist")
                 exit(1)
 
-            metadata = subprocess.check_output(["ffprobe", "-show_entries",
-                "format_tags=" + args.metadatakey, "-of", "compact",
-                strippedPath])
+            metadata = subprocess.check_output([
+                "ffprobe", "-show_entries", "format_tags=" + args.metadatakey,
+                "-of", "compact", strippedPath
+            ])
             decodedMetadata = metadata.decode("utf-8")
             metadataKeyMatches = re.search(formatRegex, decodedMetadata)
             if metadataKeyMatches:
                 metadataKeyMatch = metadataKeyMatches.group(1)
-                metadataDict[metadataKeyMatch] = metadataDict.get(metadataKeyMatch, 0) + 1
+                metadataDict[metadataKeyMatch] = metadataDict.get(
+                    metadataKeyMatch, 0) + 1
             else:
                 metadataDict["None"] = metadataDict.get("None", 0) + 1
 
@@ -52,7 +59,11 @@ def main():
     os.makedirs(os.path.dirname(outputFilename), exist_ok=True)
     with open(outputFilename, "w") as outputFile:
         for key, value in metadataDict.items():
-            print(key.encode("ascii", "ignore").decode("ascii") + " " + str(value), file=outputFile)
+            print(
+                key.encode("ascii", "ignore").decode("ascii") + " " +
+                str(value),
+                file=outputFile)
+
 
 if __name__ == "__main__":
     main()
