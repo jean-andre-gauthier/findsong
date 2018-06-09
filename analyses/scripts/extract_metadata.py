@@ -15,7 +15,7 @@ def main():
       help="file containing paths to the files to process (path)",
       required=True, type=str)
     parser.add_argument("--outputfilepath",
-      help="file where the metadata is going to be stored (path)",
+      help="file where to store the metadata (path)",
       required=True, type=str)
     args = parser.parse_args()
 

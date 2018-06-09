@@ -12,16 +12,16 @@ from glob import glob
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--inputfilesglob",
-      help="files that should be trimmed (glob)", required=True, type=str)
+      help="files to trim (glob)", required=True, type=str)
     parser.add_argument("--length", help="trim length in seconds (int)",
       required=True, type=int)
     parser.add_argument("--limitfiles",
-      help="maximal number of input files that will be processed (int)",
+      help="maximal number of input files to process (int)",
       required=True, type=int)
     parser.add_argument("--offset", help="trim offset in seconds (int)",
       required=True, type=int)
     parser.add_argument("--outputfolderpath",
-      help="folder in which the clips will be saved (path)", required=True,
+      help="folder in which to save the output clips (path)", required=True,
       type=str)
     args = parser.parse_args()
 
