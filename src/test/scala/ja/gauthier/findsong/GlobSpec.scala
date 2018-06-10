@@ -21,7 +21,7 @@ class GlobSpec extends FunSpec with Matchers {
         val glob = "src/test/resources/clip_1.mp4"
         val matchingFiles = Glob.getMatchingFiles(glob)
         matchingFiles should have length 1
-        matchingFiles(0).getName() should be ("clip_1.mp4")
+        matchingFiles(0).getName() should be("clip_1.mp4")
       }
     }
 

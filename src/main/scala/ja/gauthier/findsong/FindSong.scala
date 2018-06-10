@@ -51,88 +51,98 @@ import scala.util.Success
  *
  */
 object FindSong extends App {
-    println("findsong 1.0.1")
-    Settings.settings(args) match {
-        case Some(settings) =>
-            implicit val executionContext = ExecutionContext.fromExecutor(
-                Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors))
+  println("findsong 1.0.1")
+  Settings.settings(args) match {
+    case Some(settings) =>
+      implicit val executionContext = ExecutionContext.fromExecutor(
+        Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors))
 
-            findSong(executionContext, settings) andThen {
-                case Success(status) =>
-                    System.exit(status)
-                case Failure(_) =>
-                    System.exit(1)
-            }
+      findSong(executionContext, settings) andThen {
+        case Success(status) =>
+          System.exit(status)
+        case Failure(_) =>
+          System.exit(1)
+      }
+    case None =>
+      System.exit(1)
+  }
+
+  /**
+    *  Indexes the songs in the input directory, and then waits on user input to record and match a clip.
+    *
+    *  @param settings a Settings object containing the options for the app
+    */
+  private def findSong(implicit executionContext: ExecutionContext,
+                       settings: Settings): scala.concurrent.Future[Int] = {
+    val indexerStart = System.nanoTime()
+
+    Indexer.indexSongs
+      .transform {
+        case Success(songIndex) =>
+          val indexerEnd = System.nanoTime()
+          val indexerDuration =
+            TimeUnit.NANOSECONDS.toMillis(indexerEnd - indexerStart)
+          val indexSize = songIndex.foldLeft(0)(
+            (acc: Int, keyValue: (SongIndexKey, Seq[SongIndexValue])) =>
+              acc + keyValue._2.size)
+          println(
+            s"Indexing completed in ${indexerDuration} ms. Index contains ${indexSize} fingerprints")
+          recordLoop(songIndex)
+          Success(0)
+        case Failure(exception) =>
+          println("Failed to index songs: ")
+          exception.printStackTrace()
+          Success(1)
+      }
+  }
+
+  /**
+    *  Records and matches a clip through the built-in microphone everytime <ENTER> is pressed.
+    *
+    *  @param songIndex the index containing the song fingerprints
+    *  @param settings a Settings object containing the options for the app
+    */
+  private def recordLoop(songIndex: SongIndex)(
+      implicit settings: Settings): Unit = {
+    val clipNamesClipSignals = settings.General.matcherGlob match {
+      case Some(glob) =>
+        Glob
+          .getMatchingFiles(glob)
+          .map(
+            (file: File) =>
+              (file.getName(),
+               AudioFile.extractFileSignal(file.getCanonicalPath())))
+          .toIterator
+      case None =>
+        Iterator
+          .continually({
+            println("Press <Enter> to start recording")
+            StdIn.readLine()
+          })
+          .map((_) => {
+            println("Recording...")
+            val signal = Microphone.extractMicrophoneSignal
+            println("Recording complete")
+            ("microphone recording", signal)
+          })
+    }
+
+    clipNamesClipSignals.foreach((clipNameClipSignal: (String, Signal)) => {
+      val (clipName, clipSignal) = clipNameClipSignal
+      val matcherStart = System.nanoTime()
+      val matches = Matcher.signalToMatches(clipSignal, songIndex)
+      val matcherEnd = System.nanoTime()
+      val matcherDuration =
+        TimeUnit.NANOSECONDS.toMillis(matcherEnd - matcherStart)
+      val matchesSummaryOption = Matcher.getMatchesStatistics(matches)
+
+      println(s"Matching for ${clipName} completed in ${matcherDuration} ms")
+      matchesSummaryOption match {
+        case Some(matchesSummary) =>
+          println(matchesSummary)
         case None =>
-            System.exit(1)
-    }
-
-    /**
-     *  Indexes the songs in the input directory, and then waits on user input to record and match a clip.
-     *
-     *  @param settings a Settings object containing the options for the app
-     */
-    private def findSong(implicit executionContext: ExecutionContext, settings: Settings): scala.concurrent.Future[Int] = {
-        val indexerStart = System.nanoTime()
-
-        Indexer.indexSongs
-            .transform {
-                case Success(songIndex) =>
-                    val indexerEnd = System.nanoTime()
-                    val indexerDuration = TimeUnit.NANOSECONDS.toMillis(indexerEnd - indexerStart)
-                    val indexSize = songIndex.foldLeft(0)((acc: Int, keyValue: (SongIndexKey, Seq[SongIndexValue])) => acc + keyValue._2.size)
-                    println(s"Indexing completed in ${indexerDuration} ms. Index contains ${indexSize} fingerprints")
-                    recordLoop(songIndex)
-                    Success(0)
-                case Failure(exception) =>
-                    println("Failed to index songs: ")
-                    exception.printStackTrace()
-                    Success(1)
-            }
-    }
-
-    /**
-     *  Records and matches a clip through the built-in microphone everytime <ENTER> is pressed.
-     *
-     *  @param songIndex the index containing the song fingerprints
-     *  @param settings a Settings object containing the options for the app
-     */
-    private def recordLoop(songIndex: SongIndex)(implicit settings: Settings): Unit = {
-        val clipNamesClipSignals = settings.General.matcherGlob match {
-            case Some(glob) =>
-                Glob
-                    .getMatchingFiles(glob)
-                    .map((file: File) => (file.getName(), AudioFile.extractFileSignal(file.getCanonicalPath())))
-                    .toIterator
-            case None =>
-                Iterator
-                    .continually({
-                        println("Press <Enter> to start recording")
-                        StdIn.readLine()
-                    })
-                    .map((_) => {
-                        println("Recording...")
-                        val signal = Microphone.extractMicrophoneSignal
-                        println("Recording complete")
-                        ("microphone recording", signal)
-                    })
-        }
-
-        clipNamesClipSignals.foreach((clipNameClipSignal: (String, Signal)) => {
-            val (clipName, clipSignal) = clipNameClipSignal
-            val matcherStart = System.nanoTime()
-            val matches = Matcher.signalToMatches(clipSignal, songIndex)
-            val matcherEnd = System.nanoTime()
-            val matcherDuration = TimeUnit.NANOSECONDS.toMillis(matcherEnd - matcherStart)
-            val matchesSummaryOption = Matcher.getMatchesStatistics(matches)
-
-            println(s"Matching for ${clipName} completed in ${matcherDuration} ms")
-            matchesSummaryOption match {
-                case Some(matchesSummary) =>
-                    println(matchesSummary)
-                case None =>
-                    println("No matching song found")
-            }
-        })
-    }
+          println("No matching song found")
+      }
+    })
+  }
 }

@@ -11,13 +11,11 @@ class SettingsSpec extends FunSpec with Matchers {
     }
 
     describe("when only the input directory and format are specified") {
-      it("should use default values for the other parameters") {
-      }
+      it("should use default values for the other parameters") {}
     }
 
     describe("when all arguments are specified") {
-      it("should use the CLI arguments") {
-      }
+      it("should use the CLI arguments") {}
     }
   }
 }
