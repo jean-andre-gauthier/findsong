@@ -1,14 +1,13 @@
-#
-# Measures the performance on a series of songs and clips
-#
+"""
+Measures the performance on a series of songs and clips
+"""
 
 import argparse
-import numpy as np
-import os
 import re
 import subprocess
 import sys
 from glob import glob
+import numpy as np
 
 
 def main():
@@ -39,54 +38,53 @@ def main():
         type=str)
     args = parser.parse_args()
 
-    matchesClips = glob(args.matchesglob)
-    nMacthesGlobClips = len(matchesClips)
-    matchesSize = int(args.matchessize)
-    indexSongs = glob(args.indexglob)
-    nIndexGlobClips = len(indexSongs)
-    indexSizes = list(map(lambda indexSize: int(indexSize), args.indexsizes))
-    maxIndexSize = max(indexSizes)
+    matches_clips = glob(args.matchesglob)
+    n_matches_glob_clips = len(matches_clips)
+    matches_size = int(args.matchessize)
+    index_songs = glob(args.indexglob)
+    n_index_glob_clips = len(index_songs)
+    index_sizes = list(
+        map(lambda index_size: int(index_size), args.indexsizes))
+    max_index_size = max(index_sizes)
 
-    if matchesSize > nMacthesGlobClips:
-        print(
-            f"--nclips={matchesSize} but inputclips matched only {nMacthesGlobClips} clips"
-        )
+    if matches_size > n_matches_glob_clips:
+        print(f"--nclips={matches_size} but inputclips matched only " +
+              f"{n_matches_glob_clips} clips")
         sys.exit(1)
 
-    if maxIndexSize > nIndexGlobClips:
-        print(
-            f"--nsongs={indexSizes} but inputsongs matched only {nIndexGlobClips} songs"
-        )
+    if max_index_size > n_index_glob_clips:
+        print(f"--nsongs={index_sizes} but inputsongs matched only " +
+              f"{n_index_glob_clips} songs")
         sys.exit(1)
 
-    findSong = args.findsongpath
-    findSongClipsGlob = "{" + ",".join(matchesClips[0:matchesSize]) + "}"
-    indexerRegex = r"Indexing completed in (\d+) ms. Index contains (\d+) fingerprints"
-    matcherRegex = r"^Matching for .+ completed in (\d+) ms$"
+    find_song = args.findsongpath
+    find_song_clips_glob = "{" + ",".join(matches_clips[0:matches_size]) + "}"
+    indexer_regex = (r"Indexing completed in (\d+) ms. Index contains " +
+                     r"(\d+) fingerprints")
+    matcher_regex = r"^Matching for .+ completed in (\d+) ms$"
 
-    for indexSize in indexSizes:
-        findSongIndexGlob = "{" + ",".join(indexSongs[0:indexSize]) + "}"
+    for index_size in index_sizes:
+        find_song_index_glob = "{" + ",".join(index_songs[0:index_size]) + "}"
         process = subprocess.Popen(
             [
-                "java", "-Xmx2G", "-jar", findSong, "-i", findSongIndexGlob,
-                "-m", findSongClipsGlob
+                "java", "-Xmx2G", "-jar", find_song, "-i",
+                find_song_index_glob, "-m", find_song_clips_glob
             ],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE)
-        output, errors = list(
-            map(lambda s: s.decode("utf-8"), process.communicate()))
+        output, = list(map(lambda s: s.decode("utf-8"), process.communicate()))
 
-        indexerMatch = re.search(indexerRegex, output)
-        indexerDuration, indexFingerprintsSize = indexerMatch.group(
-            1), indexerMatch.group(2)
-        matcherMatches = re.findall(matcherRegex, output, flags=re.MULTILINE)
-        matcherDurations = list(
-            map(lambda matcherMatch: int(matcherMatch), matcherMatches))
+        indexer_match = re.search(indexer_regex, output)
+        indexer_duration, index_fingerprints_size = indexer_match.group(
+            1), indexer_match.group(2)
+        matcher_matches = re.findall(matcher_regex, output, flags=re.MULTILINE)
+        matcher_durations = list(
+            map(lambda matcherMatch: int(matcherMatch), matcher_matches))
 
-        with open(args.outputfilepath, "a") as outputFile:
-            outputFile.write(" ".join([
-                str(indexSize), indexFingerprintsSize, indexerDuration,
-                str(np.mean(matcherDurations))
+        with open(args.outputfilepath, "a") as output_file:
+            output_file.write(" ".join([
+                str(index_size), index_fingerprints_size, indexer_duration,
+                str(np.mean(matcher_durations))
             ]) + "\n")
 
 

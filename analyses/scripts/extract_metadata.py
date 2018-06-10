@@ -1,6 +1,6 @@
-#
-# Extracts metadata from audio files with ffmpeg
-#
+"""
+Extracts metadata from audio files with ffmpeg
+"""
 
 import argparse
 import os
@@ -32,37 +32,37 @@ def main():
         print(f"Error: {args.outputfilepath} exists\n")
         exit(1)
 
-    formatRegex = r"^format\|tag:\w+=(.*)$"
-    inputFilename = args.pathsfilepath
-    metadataDict = {}
-    with open(inputFilename) as inputFile:
-        for path in inputFile.readlines():
-            strippedPath = path.strip()
-            if not os.path.exists(strippedPath):
+    format_regex = r"^format\|tag:\w+=(.*)$"
+    input_filename = args.pathsfilepath
+    metadata_dict = {}
+    with open(input_filename) as input_file:
+        for path in input_file.readlines():
+            stripped_path = path.strip()
+            if not os.path.exists(stripped_path):
                 print(f"Error: {path} does not exist")
                 exit(1)
 
             metadata = subprocess.check_output([
                 "ffprobe", "-show_entries", "format_tags=" + args.metadatakey,
-                "-of", "compact", strippedPath
+                "-of", "compact", stripped_path
             ])
-            decodedMetadata = metadata.decode("utf-8")
-            metadataKeyMatches = re.search(formatRegex, decodedMetadata)
-            if metadataKeyMatches:
-                metadataKeyMatch = metadataKeyMatches.group(1)
-                metadataDict[metadataKeyMatch] = metadataDict.get(
-                    metadataKeyMatch, 0) + 1
+            decode_metadata = metadata.decode("utf-8")
+            metadata_key_matches = re.search(format_regex, decode_metadata)
+            if metadata_key_matches:
+                metadata_key_match = metadata_key_matches.group(1)
+                metadata_dict[metadata_key_match] = metadata_dict.get(
+                    metadata_key_match, 0) + 1
             else:
-                metadataDict["None"] = metadataDict.get("None", 0) + 1
+                metadata_dict["None"] = metadata_dict.get("None", 0) + 1
 
-    outputFilename = args.outputfilepath
-    os.makedirs(os.path.dirname(outputFilename), exist_ok=True)
-    with open(outputFilename, "w") as outputFile:
-        for key, value in metadataDict.items():
+    output_filename = args.outputfilepath
+    os.makedirs(os.path.dirname(output_filename), exist_ok=True)
+    with open(output_filename, "w") as output_file:
+        for key, value in metadata_dict.items():
             print(
                 key.encode("ascii", "ignore").decode("ascii") + " " +
                 str(value),
-                file=outputFile)
+                file=output_file)
 
 
 if __name__ == "__main__":

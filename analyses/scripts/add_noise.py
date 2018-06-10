@@ -1,13 +1,11 @@
-#
-# Adds noise to a clip
-#
+"""
+Adds noise to a clip
+"""
 
 import argparse
-import ffmpeg
-import os
 import subprocess
 from glob import glob
-from os import path
+from os import makedirs, path
 
 
 def main():
@@ -42,20 +40,23 @@ def main():
         print(f"Error: {args.outputfolderpath} already exists")
         exit(1)
 
-    noiseWeight = float(args.noiseweight)
-    if noiseWeight < 0.0:
-        print(
-            f"Error: noise weight must be larger or equal to 0.0 but is {noiseWeight}"
-        )
+    noise_weight = float(args.noiseweight)
+    if noise_weight < 0.0:
+        print("Error: noise weight must be larger or equal to 0.0 but is " +
+              noise_weight)
         exit(1)
 
-    os.makedirs(args.outputfolderpath, exist_ok=True)
+    makedirs(args.outputfolderpath, exist_ok=True)
 
-    for inputFilename in glob(args.inputfilesglob):
-        inputFileBasename = path.basename(inputFilename)
-        outputFilename = path.join(args.outputfolderpath, inputFileBasename)
-        ffmpegCommand = f"ffmpeg -i {inputFilename} -i {args.noisefilepath} -filter_complex '[0]volume=1.0[a];[1]volume={noiseWeight}[b];[a][b]amix=duration=shortest' -ac 2 -c:a libmp3lame -q:a 4 {outputFilename}"
-        subprocess.run(ffmpegCommand, check=True, shell=True)
+    for input_filename in glob(args.inputfilesglob):
+        input_file_basename = path.basename(input_filename)
+        output_filename = path.join(args.outputfolderpath, input_file_basename)
+        ffmpeg_command = (
+            f"ffmpeg -i {input_filename} -i {args.noisefilepath} " +
+            f" -filter_complex " + f"'[0]volume=1.0[a];" +
+            f"[1]volume={noise_weight}[b];[a][b]amix=duration=shortest' " +
+            f"-ac 2 -c:a libmp3lame -q:a 4 {output_filename}")
+        subprocess.run(ffmpeg_command, check=True, shell=True)
 
 
 if __name__ == "__main__":

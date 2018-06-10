@@ -1,13 +1,12 @@
-#
-# Trims audio files to a certain length at a given offset
-#
+"""
+Trims audio files to a certain length at a given offset
+"""
 
 import argparse
-import ffmpeg
 import os
 import random
-import string
 from glob import glob
+import ffmpeg
 
 
 def main():
@@ -45,37 +44,36 @@ def main():
 
     os.mkdir(args.outputfolderpath)
 
-    currentLimitFiles = 1
-    pathsFilename = os.path.join(args.outputfolderpath, "paths")
-    printable = set(string.printable)
+    current_limit_files = 1
+    paths_filename = os.path.join(args.outputfolderpath, "paths")
 
-    with open(pathsFilename, "w") as pathsFile:
-        inputFiles = glob(args.inputfilesglob, recursive=True)
-        random.shuffle(inputFiles)
-        for inputFilename in inputFiles:
-            absoluteInputFilename = os.path.abspath(inputFilename)
+    with open(paths_filename, "w") as paths_file:
+        input_files = glob(args.inputfilesglob, recursive=True)
+        random.shuffle(input_files)
+        for input_filename in input_files:
+            absolute_input_filename = os.path.abspath(input_filename)
 
-            if args.limitfiles == -1 or currentLimitFiles <= args.limitfiles:
-                outputBasename = os.path.basename(inputFilename)
-                filename, extension = os.path.splitext(outputBasename)
-                outputFilename = os.path.join(args.outputfolderpath,
-                                              filename + extension)
+            if args.limitfiles == -1 or current_limit_files <= args.limitfiles:
+                output_basename = os.path.basename(input_filename)
+                filename, extension = os.path.splitext(output_basename)
+                output_filename = os.path.join(args.outputfolderpath,
+                                               filename + extension)
 
-                if not os.path.isfile(outputFilename):
+                if not os.path.isfile(output_filename):
                     try:
                         ffmpeg.input(
-                            inputFilename, t=args.length,
+                            input_filename, t=args.length,
                             ss=args.offset).filter_("dynaudnorm").output(
-                                outputFilename).run()
+                                output_filename).run()
 
-                        pathsFile.write(absoluteInputFilename + "\n")
-                        currentLimitFiles += 1
+                        paths_file.write(absolute_input_filename + "\n")
+                        current_limit_files += 1
                     except KeyboardInterrupt:
                         break
                     except:
                         pass
 
-        print(f"{currentLimitFiles-1} clips exported")
+        print(f"{current_limit_files-1} clips exported")
 
 
 if __name__ == "__main__":
