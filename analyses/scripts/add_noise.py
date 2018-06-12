@@ -6,6 +6,7 @@ import argparse
 import subprocess
 from glob import glob
 from os import makedirs, path
+from shlex import quote
 
 
 def main():
@@ -26,8 +27,8 @@ def main():
         required=True,
         type=float)
     parser.add_argument(
-        "--outputfolderpath",
-        help="folder where to save the processed clips (path)",
+        "--outputdirectorypath",
+        help="directory where to save the processed clips (path)",
         required=True,
         type=str)
     args = parser.parse_args()
@@ -36,8 +37,8 @@ def main():
         print(f"Error: noise file {args.noisefilepath} does not exist")
         exit(1)
 
-    if path.exists(args.outputfolderpath):
-        print(f"Error: {args.outputfolderpath} already exists")
+    if path.exists(args.outputdirectorypath):
+        print(f"Error: {args.outputdirectorypath} already exists")
         exit(1)
 
     noise_weight = float(args.noiseweight)
@@ -46,16 +47,17 @@ def main():
               noise_weight)
         exit(1)
 
-    makedirs(args.outputfolderpath, exist_ok=True)
+    makedirs(args.outputdirectorypath, exist_ok=True)
 
     for input_filename in glob(args.inputfilesglob):
         input_file_basename = path.basename(input_filename)
-        output_filename = path.join(args.outputfolderpath, input_file_basename)
+        output_filename = path.join(args.outputdirectorypath,
+                                    input_file_basename)
         ffmpeg_command = (
-            f"ffmpeg -i {input_filename} -i {args.noisefilepath} " +
-            f" -filter_complex " + f"'[0]volume=1.0[a];" +
+            f"ffmpeg -i {quote(input_filename)} -i {args.noisefilepath} " +
+            " -filter_complex '[0]volume=1.0[a];" +
             f"[1]volume={noise_weight}[b];[a][b]amix=duration=shortest' " +
-            f"-ac 2 -c:a libmp3lame -q:a 4 {output_filename}")
+            f"-ac 2 -c:a libmp3lame -q:a 4 {quote(output_filename)}")
         subprocess.run(ffmpeg_command, check=True, shell=True)
 
 

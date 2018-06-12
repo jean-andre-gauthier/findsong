@@ -3,7 +3,7 @@ Trims audio files to a certain length at a given offset
 """
 
 import argparse
-import os
+from os import makedirs, path
 import random
 from glob import glob
 import ffmpeg
@@ -32,34 +32,34 @@ def main():
         required=True,
         type=int)
     parser.add_argument(
-        "--outputfolderpath",
-        help="folder in which to save the output clips (path)",
+        "--outputdirectorypath",
+        help="directory in which to save the output clips (path)",
         required=True,
         type=str)
     args = parser.parse_args()
 
-    if os.path.exists(args.outputfolderpath):
-        print(f"Error: {args.outputfolderpath} already exists")
+    if path.exists(args.outputdirectorypath):
+        print(f"Error: {args.outputdirectorypath} already exists")
         exit(1)
 
-    os.mkdir(args.outputfolderpath)
+    makedirs(args.outputdirectorypath)
 
     current_limit_files = 1
-    paths_filename = os.path.join(args.outputfolderpath, "paths")
+    paths_filename = path.join(args.outputdirectorypath, "paths")
 
     with open(paths_filename, "w") as paths_file:
         input_files = glob(args.inputfilesglob, recursive=True)
         random.shuffle(input_files)
         for input_filename in input_files:
-            absolute_input_filename = os.path.abspath(input_filename)
+            absolute_input_filename = path.abspath(input_filename)
 
             if args.limitfiles == -1 or current_limit_files <= args.limitfiles:
-                output_basename = os.path.basename(input_filename)
-                filename, extension = os.path.splitext(output_basename)
-                output_filename = os.path.join(args.outputfolderpath,
-                                               filename + extension)
+                output_basename = path.basename(input_filename)
+                filename, extension = path.splitext(output_basename)
+                output_filename = path.join(args.outputdirectorypath,
+                                            filename + extension)
 
-                if not os.path.isfile(output_filename):
+                if not path.isfile(output_filename):
                     try:
                         ffmpeg.input(
                             input_filename, t=args.length,
