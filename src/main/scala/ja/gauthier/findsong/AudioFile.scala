@@ -100,12 +100,12 @@ object AudioFile {
         }
       })
     Song(
-      metadata("album"),
-      metadata("artist"),
-      metadata("disc"),
-      metadata("genre"),
-      metadata("title"),
-      metadata("track")
+      metadata.getOrElse("album", "Unknown album"),
+      metadata.getOrElse("artist", "Unknown artist"),
+      metadata.getOrElse("disc", "Unknown disc"),
+      metadata.getOrElse("genre", "Unknown genre"),
+      metadata.getOrElse("title", "Unknown title"),
+      metadata.getOrElse("track", "Unknown track")
     )
   }
 
