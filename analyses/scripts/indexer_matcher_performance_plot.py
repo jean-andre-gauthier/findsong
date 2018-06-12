@@ -2,14 +2,14 @@
 Generates a plot for performance analyses
 """
 
-import argparse
+from argparse import ArgumentParser
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
         "--inputfilepath",
         help="path to the input file (path)",

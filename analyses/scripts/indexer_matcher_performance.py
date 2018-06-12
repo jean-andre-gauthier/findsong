@@ -2,7 +2,7 @@
 Measures the performance on a series of songs and clips
 """
 
-import argparse
+from argparse import ArgumentParser
 import re
 import subprocess
 import sys
@@ -11,7 +11,7 @@ import numpy as np
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
         "--findsongpath",
         help="path to the FindSong binary (path)",

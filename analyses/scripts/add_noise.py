@@ -2,7 +2,7 @@
 Adds noise to a clip
 """
 
-import argparse
+from argparse import ArgumentParser
 import subprocess
 from glob import glob
 from os import makedirs, path
@@ -10,7 +10,7 @@ from shlex import quote
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
         "--inputfilesglob",
         help="clips to which to add noise (glob)",

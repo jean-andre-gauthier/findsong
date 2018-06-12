@@ -2,14 +2,14 @@
 Extracts metadata from audio files with ffmpeg
 """
 
-import argparse
+from argparse import ArgumentParser
 import os
 import re
 import subprocess
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
         "--metadatakey", help="ffprobe metadata key", required=True, type=str)
     parser.add_argument(

@@ -2,7 +2,7 @@
 Trims audio files to a certain length at a given offset
 """
 
-import argparse
+from argparse import ArgumentParser
 from os import makedirs, path
 import random
 from glob import glob
@@ -10,7 +10,7 @@ import ffmpeg
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = ArgumentParser()
     parser.add_argument(
         "--inputfilesglob",
         help="files to trim (glob)",
