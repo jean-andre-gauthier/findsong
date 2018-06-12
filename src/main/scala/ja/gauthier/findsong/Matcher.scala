@@ -33,11 +33,11 @@ object Matcher {
       val matchesTable = matches.foldLeft("")((table, songMatch) => {
         val score = math.round(songMatch.confidence)
         val (color, reset) = settings.General.matcherGlob match {
-          case Some(_) =>
+          case Some(_) => ("", "")
+          case None =>
             (if (score >= settings.Matching.greenLevel) Console.GREEN
             else if (score >= settings.Matching.yellowLevel) Console.YELLOW
             else Console.RED, Console.RESET)
-          case None => ("", "")
         }
         table + color + score + " / 100" +
           " - " + songMatch.song.title +
