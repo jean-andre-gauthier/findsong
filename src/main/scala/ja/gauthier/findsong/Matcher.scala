@@ -32,13 +32,16 @@ object Matcher {
         Seq(Console.GREEN, Console.YELLOW, Console.RED, Console.WHITE)
       val matchesTable = matches.foldLeft("")((table, songMatch) => {
         val score = math.round(songMatch.confidence)
-        val color =
-          if (score >= settings.Matching.greenLevel) Console.GREEN
-          else if (score >= settings.Matching.yellowLevel) Console.YELLOW
-          else Console.RED
+        val (color, reset) = settings.General.matcherGlob match {
+          case Some(_) =>
+            (if (score >= settings.Matching.greenLevel) Console.GREEN
+            else if (score >= settings.Matching.yellowLevel) Console.YELLOW
+            else Console.RED, Console.RESET)
+          case None => ("", "")
+        }
         table + color + score + " / 100" +
           " - " + songMatch.song.title +
-          " - " + songMatch.song.artist + Console.RESET + "\n"
+          " - " + songMatch.song.artist + reset + "\n"
       })
       Some(matchesTable)
     } else {
