@@ -51,7 +51,7 @@ import scala.util.Success
  *
  */
 object FindSong extends App {
-  println("findsong 1.0.1")
+  println("findsong 1.0.2")
   Settings.settings(args) match {
     case Some(settings) =>
       implicit val executionContext = ExecutionContext.fromExecutor(
@@ -110,7 +110,7 @@ object FindSong extends App {
           .getMatchingFiles(glob)
           .map(
             (file: File) =>
-              (file.getName(),
+              (file.getCanonicalPath(),
                AudioFile.extractFileSignal(file.getCanonicalPath())))
           .toIterator
       case None =>
