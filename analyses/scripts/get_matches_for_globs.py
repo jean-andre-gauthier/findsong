@@ -12,10 +12,7 @@ import sys
 def main():
     parser = ArgumentParser()
     parser.add_argument(
-        "--clipsglob",
-        help="clips to use (list of globs)",
-        required=True,
-        type=str)
+        "--clipsglob", help="clips to use (glob)", required=True, type=str)
     parser.add_argument(
         "--clipssamplespercapture",
         help="values to use for the findsong --samplesPerCapture flag " +
@@ -33,7 +30,7 @@ def main():
         required=True,
         type=str)
     parser.add_argument(
-        "--songsglob", help="songs to index (glob)", required=True)
+        "--songsglob", help="songs to index (glob)", required=True, type=str)
     args = parser.parse_args()
 
     if path.exists(args.outputdirectorypath):

@@ -32,3 +32,15 @@ done
 # Recognition rate
 python workspace/scala/findsong/analyses/scripts/get_matches_for_globs.py --clipsglob "workspace/scala/findsong/analyses/data/clips/recrate/**/*.mp3" --clipssamplespercapture 8000 16000 40000 80000 160000 --findsongjarpath workspace/scala/findsong/bin/findsong-assembly-1.0.5.jar --outputdirectorypath workspace/scala/findsong/analyses/data/recognition_rate --songsglob "workspace/scala/findsong/analyses/data/indexes/recrate/*.mp3"
 python workspace/scala/findsong/analyses/scripts/get_recrate_for_matches.py --matchesfilepath workspace/scala/findsong/analyses/data/recognition_rate/matched_clips_for_glob --recrateformatchesfilepath workspace/scala/findsong/analyses/data/recognition_rate/recrate_for_matches --wrongresultsformatchesfilepath workspace/scala/findsong/analyses/data/recognition_rate/wrong_results_for_matches
+
+# Performance
+mkdir workspace/scala/findsong/analyses/data/performance
+clipsglobs=()
+indexsizes=()
+songsglobs=()
+for size in 10 20 50 100 200 500 1000; do
+	clipsglobs+=("workspace/scala/findsong/analyses/data/clips/performance/size/$size/*.mp3")
+	indexsizes+=("$size")
+	songsglobs+=("workspace/scala/findsong/analyses/data/indexes/performance/size/$size/*.mp3")
+done
+python workspace/scala/findsong/analyses/scripts/calculate_indexer_matcher_performance.py --clipsglobs "${clipsglobs[@]}" --findsongjarpath "workspace/scala/findsong/bin/findsong-assembly-1.0.5.jar" --indexsizes "${indexsizes[@]}" --performancefilepath workspace/scala/findsong/analyses/data/performance/performance_by_index_size --songsglobs "${songsglobs[@]}"

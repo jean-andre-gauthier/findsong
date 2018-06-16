@@ -148,6 +148,7 @@ analyses/dumps/*
 analyses/library/*
 !analyses/library/**/*.MD
 analyses/data/indexes/**/*.txt
+analyses/data/clips/**/*.txt
 !bin/*.jar
 src/test/resources/*.txt
 src/test/resources/*.wav
