@@ -46,8 +46,8 @@ def main():
                 "ffprobe", "-show_entries", "format_tags=" + args.metadatakey,
                 "-of", "compact", stripped_path
             ])
-            decode_metadata = metadata.decode("utf-8")
-            metadata_key_matches = re.search(format_regex, decode_metadata)
+            decoded_metadata = metadata.decode("utf-8")
+            metadata_key_matches = re.search(format_regex, decoded_metadata)
             if metadata_key_matches:
                 metadata_key_match = metadata_key_matches.group(1)
                 metadata_dict[metadata_key_match] = metadata_dict.get(

@@ -1,5 +1,5 @@
 """
-Trims audio files to a certain length at a given offset
+Trims audio files to a certain length (at a random offset)
 """
 
 from argparse import ArgumentParser
@@ -17,18 +17,13 @@ def main():
         required=True,
         type=str)
     parser.add_argument(
-        "--length",
+        "--cliplength",
         help="trim length in seconds (int)",
         required=True,
         type=int)
     parser.add_argument(
         "--limitfiles",
         help="maximal number of input files to process (int)",
-        required=True,
-        type=int)
-    parser.add_argument(
-        "--offset",
-        help="trim offset in seconds (int)",
         required=True,
         type=int)
     parser.add_argument(
@@ -61,10 +56,19 @@ def main():
 
                 if not path.isfile(output_filename):
                     try:
+                        clip_length = int(args.cliplength)
+                        duration = int(
+                            float(
+                                ffmpeg.probe(input_filename)["format"][
+                                    "duration"]))
+                        if duration >= clip_length:
+                            offset = random.randint(0, duration - clip_length)
+                        else:
+                            offset = 0
+
                         ffmpeg.input(
-                            input_filename, t=args.length,
-                            ss=args.offset).filter_("dynaudnorm").output(
-                                output_filename).run()
+                            input_filename, t=clip_length, ss=offset).filter_(
+                                "dynaudnorm").output(output_filename).run()
 
                         paths_file.write(absolute_input_filename + "\n")
                         current_limit_files += 1
