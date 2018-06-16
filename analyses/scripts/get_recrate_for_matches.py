@@ -76,6 +76,8 @@ def main():
                 length_noise_n_matches.append(
                     [str(length), str(noise),
                      str(n_matches)])
+        sort(length_noise_n_matches)
+
         for entry in length_noise_n_matches:
             print(" ".join(entry), file=output_file)
 
