@@ -30,5 +30,5 @@ for noise in 5 10 15 20; do
 done
 
 # Recognition rate
-python workspace/scala/findsong/analyses/scripts/get_matches_for_globs.py --clipsglob "workspace/scala/findsong/analyses/data/clips/recrate/**/*.mp3" --clipssamplespercapture 8000 16000 40000 80000 160000 --findsongjarpath workspace/scala/findsong/bin/findsong-assembly-1.0.5.jar --outputfolderpath workspace/scala/findsong/analyses/data/recognition_rate --songsglob "workspace/scala/findsong/analyses/data/indexes/recrate/*.mp3"
-python workspace/scala/findsong/analyses/scripts/get_recrate_for_matches.py --matchesfilepath workspace/scala/findsong/analyses/data/recognition_rate/matches_for_glob --outputfilepath workspace/scala/findsong/analyses/data/recognition_rate/recrate_for_matches
+python workspace/scala/findsong/analyses/scripts/get_matches_for_globs.py --clipsglob "workspace/scala/findsong/analyses/data/clips/recrate/**/*.mp3" --clipssamplespercapture 8000 16000 40000 80000 160000 --findsongjarpath workspace/scala/findsong/bin/findsong-assembly-1.0.5.jar --outputdirectorypath workspace/scala/findsong/analyses/data/recognition_rate --songsglob "workspace/scala/findsong/analyses/data/indexes/recrate/*.mp3"
+python workspace/scala/findsong/analyses/scripts/get_recrate_for_matches.py --matchesfilepath workspace/scala/findsong/analyses/data/recognition_rate/matched_clips_for_glob --recrateformatchesfilepath workspace/scala/findsong/analyses/data/recognition_rate/recrate_for_matches --wrongresultsformatchesfilepath workspace/scala/findsong/analyses/data/recognition_rate/wrong_results_for_matches

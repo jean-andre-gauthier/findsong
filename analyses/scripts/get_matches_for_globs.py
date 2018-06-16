@@ -28,20 +28,22 @@ def main():
         required=True,
         type=str)
     parser.add_argument(
-        "--outputfolderpath",
-        help="folder where to save the processed clips (path)",
+        "--outputdirectorypath",
+        help="directory where to save the processed clips (path)",
         required=True,
         type=str)
     parser.add_argument(
         "--songsglob", help="songs to index (glob)", required=True)
     args = parser.parse_args()
 
-    if path.exists(args.outputfolderpath):
-        print(f"Error: {args.outputfolderpath} already exists")
+    if path.exists(args.outputdirectorypath):
+        print(f"Error: {args.outputdirectorypath} already exists")
         sys.exit(1)
-    makedirs(args.outputfolderpath)
-    matches_for_glob_filename = path.join(args.outputfolderpath,
-                                          "matches_for_glob")
+    makedirs(args.outputdirectorypath)
+    matched_clips_for_glob_filename = path.join(args.outputdirectorypath,
+                                                "matched_clips_for_glob")
+    unmatched_clips_for_glob_filename = path.join(args.outputdirectorypath,
+                                                  "unmatched_clips_for_glob")
 
     completed_findsong_process = subprocess.run(
         [
@@ -52,17 +54,31 @@ def main():
 
     if completed_findsong_process.returncode == 0:
         findsong_output = completed_findsong_process.stdout.decode("ascii")
-        findsong_output_regex = (
+        matched_clips_regex = (
             r"Matching for (.+) completed in (\d+) ms\n" +
             r"(\d*) / (\d*) - (.*)\n" + r"(\d*) / (\d*) - (.*)\n" +
             r"(\d*) / (\d*) - (.*)\n")
-        matches_clips = re.findall(
-            findsong_output_regex, findsong_output, flags=re.MULTILINE)
+        matched_clips = re.findall(
+            matched_clips_regex, findsong_output, flags=re.MULTILINE)
+        unmatched_clips_regex = (r"Matching for (.+) completed in (\d+) ms\n" +
+                                 r"No matching song found\n")
+        unmatched_clips = re.findall(
+            unmatched_clips_regex, findsong_output, flags=re.MULTILINE)
 
-        with open(matches_for_glob_filename, "w") as matches_for_glob_file:
-            for matches_clip in matches_clips:
-                matches_for_glob = ";".join(matches_clip)
-                print(matches_for_glob, file=matches_for_glob_file)
+        with open(matched_clips_for_glob_filename,
+                  "w") as matched_clips_for_glob_file:
+            for matched_clip in matched_clips:
+                matched_clip_for_glob = ";".join(matched_clip)
+                print(matched_clip_for_glob, file=matched_clips_for_glob_file)
+
+        with open(unmatched_clips_for_glob_filename,
+                  "w") as unmatched_clips_for_glob_file:
+            for unmatched_clip in unmatched_clips:
+                unmatched_clip_for_glob = ";".join(unmatched_clip)
+                print(
+                    unmatched_clip_for_glob,
+                    file=unmatched_clips_for_glob_file)
+
     else:
         print(
             f"Error: findsong returned {completed_findsong_process.returncode}"
