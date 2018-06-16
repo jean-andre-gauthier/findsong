@@ -9,12 +9,12 @@ A proof of concept for a song search engine. Once the engine has indexed the aud
 
 Microphone mode:
 ```
-java -Xmx2G -jar findsong-assembly-1.0.2.jar -i "<glob for files to index>"
+java -Xmx2G -jar findsong-assembly-1.0.5.jar -i "<glob for files to index>"
 ```
 
 Use audio clips instead of microphone:
 ```
-java -Xmx2G -jar findsong-assembly-1.0.2.jar -i "<glob for files to index>" -m "<glob for recordings>"
+java -Xmx2G -jar findsong-assembly-1.0.5.jar -i "<glob for files to index>" -m "<glob for recordings>"
 ```
 
 ## Complete list of options

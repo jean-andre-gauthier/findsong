@@ -7,14 +7,14 @@ import java.io.ByteArrayInputStream
 import java.io.File
 import java.io.FileInputStream
 import java.nio._
-import java.nio.charset.StandardCharsets
+import java.nio.charset._
 import java.nio.file.Paths
 import java.util.concurrent.CompletableFuture
 import javax.sound.sampled._
 import net.bramp.ffmpeg._
 import net.bramp.ffmpeg.builder.FFmpegBuilder
 import org.apache.commons.io._
-import scala.io.Source
+import scala.io._
 
 /**
   *  This object contains helper methods for ffmpeg and the java sound API.
@@ -90,6 +90,11 @@ object AudioFile {
       .done()
     val ffmpegExecutor = new FFmpegExecutor(ffmpeg, ffprobe)
     ffmpegExecutor.createJob(ffmpegBuilder).run()
+
+    implicit val codec = Codec("UTF-8")
+    codec.onMalformedInput(CodingErrorAction.REPLACE)
+    codec.onUnmappableCharacter(CodingErrorAction.REPLACE)
+
     val metadataSource = Source.fromFile(pathOut)
     val metadata = metadataSource
       .getLines()

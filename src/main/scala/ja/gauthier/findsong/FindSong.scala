@@ -51,7 +51,7 @@ import scala.util.Success
  *
  */
 object FindSong extends App {
-  println("findsong 1.0.4")
+  println("findsong 1.0.5")
   Settings.settings(args) match {
     case Some(settings) =>
       implicit val executionContext = ExecutionContext.fromExecutor(
