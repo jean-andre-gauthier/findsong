@@ -41,8 +41,8 @@ def main():
              clip_score3, _, clip_title_artist3) = (match_info_list)
             clip_noise_length_match = re.search(length_noise_regex,
                                                 clip_filename)
-            (clip_noise, clip_length) = (clip_noise_length_match.group(1),
-                                         clip_noise_length_match.group(2))
+            (clip_noise, clip_length) = (int(clip_noise_length_match.group(1)),
+                                         int(clip_noise_length_match.group(2)))
 
             metadata = subprocess.run(
                 [
@@ -69,17 +69,17 @@ def main():
                         n_matches_by_length_by_noise[clip_length].get(
                             clip_noise, 0) + 1)
 
-        length_noise_n_matches = []
+        length_noise_n_matches_list = []
         for (length,
              n_matches_by_noise) in n_matches_by_length_by_noise.items():
             for (noise, n_matches) in n_matches_by_noise.items():
-                length_noise_n_matches.append(
-                    [str(length), str(noise),
-                     str(n_matches)])
-        sort(length_noise_n_matches)
+                length_noise_n_matches_list.append([length, noise, n_matches])
+        length_noise_n_matches_list.sort()
 
-        for entry in length_noise_n_matches:
-            print(" ".join(entry), file=output_file)
+        for length_noise_n_matches in length_noise_n_matches_list:
+            print(
+                " ".join(str(entry) for entry in length_noise_n_matches),
+                file=output_file)
 
 
 if __name__ == "__main__":
