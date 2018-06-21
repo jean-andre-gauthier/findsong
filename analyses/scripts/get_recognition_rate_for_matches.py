@@ -17,7 +17,7 @@ def main():
         required=True,
         type=str)
     parser.add_argument(
-        "--recrateformatchesfilepath",
+        "--recognitionrateformatchesfilepath",
         help="recrate output file (path)",
         required=True,
         type=str)
