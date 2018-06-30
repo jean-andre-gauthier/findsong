@@ -20,7 +20,7 @@ package object songIndex {
       *
       *  @param filename the name of the file where the song index will be dumped into
       */
-    def toFile(filename: String): Unit = {
+    def toFile(filename: String)(implicit settings: Settings): Unit = {
       if (settings.General.debug) {
         val fileContent = songIndex
           .foldLeft(new StringBuilder("f1 t1 f2 t2 song\n"))(
@@ -35,7 +35,7 @@ package object songIndex {
                       .append(" ")
                       .append(songIndexKeyValue._1.f2)
                       .append(" ")
-                      .append(songIndexKeyValue._1.deltaT - songIndexValue.t1)
+                      .append(songIndexKeyValue._1.deltaT + songIndexValue.t1)
                       .append(" ")
                       .append(songIndexValue.song.title)
                       .append("\n")))

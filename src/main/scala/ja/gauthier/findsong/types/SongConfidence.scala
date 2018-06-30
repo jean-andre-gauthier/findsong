@@ -16,7 +16,7 @@ package object songConfidence {
       *
       *  @param filename the name of the file where the song scores will be dumped into
       */
-    def toFile(filename: String): Unit = {
+    def toFile(filename: String)(implicit settings: Settings): Unit = {
       if (settings.General.debug) {
         val fileContent = songConfidence
           .foldLeft(new StringBuilder("song confidence\n"))(

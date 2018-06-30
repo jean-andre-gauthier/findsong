@@ -19,7 +19,7 @@ package object constellationMap {
       *
       *  @param filename the name of the file where the constellation map will be dumped into
       */
-    def toFile(filename: String): Unit = {
+    def toFile(filename: String)(implicit settings: Settings): Unit = {
       if (settings.General.debug) {
         val fileContent = constellationMap.entries
           .toBlocking()

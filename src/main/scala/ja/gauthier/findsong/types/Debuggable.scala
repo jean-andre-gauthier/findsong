@@ -16,7 +16,7 @@ package object debuggable {
       *
       *  @param filename the name of the file where the constellation map will be dumped into
       */
-    def toFile(filename: String): Unit
+    def toFile(filename: String)(implicit settings: Settings): Unit
 
     /**
       *  Writes the contents of a file to the debug folder.
@@ -24,9 +24,9 @@ package object debuggable {
       *  @param filename the name of the file where the file content will be dumped into
       *  @param fileContent the content of the dump
       */
-    def writeStringToFile(filename: String, fileContent: String): Unit = {
+    def writeStringToFile(filename: String, fileContent: String)(implicit settings: Settings): Unit = {
       FileUtils.writeStringToFile(
-        Paths.get("analyses", "debug", filename + ".txt").toFile,
+        Paths.get(settings.General.debugDirectory, filename + ".txt").toFile,
         fileContent,
         StandardCharsets.UTF_8)
     }

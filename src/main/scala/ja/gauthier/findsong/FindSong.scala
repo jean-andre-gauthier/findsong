@@ -25,6 +25,7 @@ import scala.util.Success
  *  Usage: [options]
  *
  * --debug                  Create intermediate dump files during song fingerprinting and matching (default = false)
+ * --debugDirectory         Directory for the dump files that are created when using --debug (default = analyses/debug)
  * --fanout <value>         Maximal number of peaks that can be paired with any given peak (default = 3)
  * --greenLevel <value>     Threshold for a match score to be displayed in green (default = 25)
  * -i, --indexerGlob <glob>
@@ -51,7 +52,7 @@ import scala.util.Success
  *
  */
 object FindSong extends App {
-  println("findsong 1.0.5")
+  println("findsong 1.0.6")
   Settings.settings(args) match {
     case Some(settings) =>
       implicit val executionContext = ExecutionContext.fromExecutor(

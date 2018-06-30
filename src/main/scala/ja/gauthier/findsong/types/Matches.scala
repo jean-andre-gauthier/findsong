@@ -16,7 +16,7 @@ package object matches {
       *
       *  @param filename the name of the file where the matches list will be dumped into
       */
-    def toFile(filename: String): Unit = {
+    def toFile(filename: String)(implicit settings: Settings): Unit = {
       if (settings.General.debug) {
         val fileContent = matches
           .foldLeft(new StringBuilder("song confidence\n"))(

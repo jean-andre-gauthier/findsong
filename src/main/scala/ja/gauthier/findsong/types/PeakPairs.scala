@@ -17,7 +17,7 @@ package object peakPairs {
       *
       *  @param filename the name of the file where the peak pair list will be dumped into
       */
-    def toFile(filename: String): Unit = {
+    def toFile(filename: String)(implicit settings: Settings): Unit = {
       if (settings.General.debug) {
         val fileContent = peakPairs
           .foldLeft(new StringBuilder("f1 t1 f2 t2\n"))(

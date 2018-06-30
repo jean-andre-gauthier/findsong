@@ -14,7 +14,7 @@ package object signal {
       *
       *  @param filename the name of the file where the signal will be dumped into
       */
-    def toFile(filename: String): Unit = {
+    def toFile(filename: String)(implicit settings: Settings): Unit = {
       if (settings.General.debug) {
         val fileContent = signal
           .foldLeft(new StringBuilder(""))(

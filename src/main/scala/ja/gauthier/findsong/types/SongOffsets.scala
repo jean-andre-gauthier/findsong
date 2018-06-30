@@ -16,7 +16,7 @@ package object songOffsets {
       *
       *  @param filename the name of the file where the song offset map will be dumped into
       */
-    def toFile(filename: String): Unit = {
+    def toFile(filename: String)(implicit settings: Settings): Unit = {
       if (settings.General.debug) {
         val fileContent = songOffsets
           .foldLeft(new StringBuilder("song offset\n"))(

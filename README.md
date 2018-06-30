@@ -5,16 +5,22 @@
 
 A proof of concept for a song search engine. Once the engine has indexed the audio files in the input directory, it can record a clip with the built-in microphone and recognise which song is being played.
 
+## Installation
+
+1. Install [ffmpeg](https://ffmpeg.org/download.html) (minimal required version: ffmpeg 2.8.14)
+2. Download the findsong [binary](https://github.com/jean-andre-gauthier/findsong/raw/master/bin/findsong-assembly-1.0.6.jar)
+3. Run the binary with java (minimal required version: Java SE 8)
+
 ## Basic usage
 
 Microphone mode:
 ```
-java -Xmx2G -jar findsong-assembly-1.0.5.jar -i "<glob for files to index>"
+java -Xmx2G -jar findsong-assembly-1.0.6.jar -i "<glob for files to index>"
 ```
 
 Use audio clips instead of microphone:
 ```
-java -Xmx2G -jar findsong-assembly-1.0.5.jar -i "<glob for files to index>" -m "<glob for recordings>"
+java -Xmx2G -jar findsong-assembly-1.0.6.jar -i "<glob for files to index>" -m "<glob for recordings>"
 ```
 
 ## Complete list of options
@@ -23,6 +29,7 @@ java -Xmx2G -jar findsong-assembly-1.0.5.jar -i "<glob for files to index>" -m "
 Usage: [options]
 
   --debug                  Create intermediate dump files during song fingerprinting and matching (default = false)
+  --debugDirectory         Directory for the dump files that are created when using --debug (default = analyses/debug)
   --fanout <value>         Maximal number of peaks that can be paired with any given peak (default = 3)
   --greenLevel <value>     Threshold for a match score to be displayed in green (default = 25)
   -i, --indexerGlob <glob>

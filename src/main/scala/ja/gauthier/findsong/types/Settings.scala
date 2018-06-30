@@ -23,6 +23,7 @@ object Settings {
     object General {
       val general = findsong.getConfig("general")
       val debug = general.getBoolean("debug")
+      val debugDirectory = general.getString("debug-directory")
     }
 
     object Matching {
@@ -66,6 +67,7 @@ object Settings {
 
   case class CliArguments(
       debug: Boolean = ApplicationConfigArguments.General.debug,
+      debugDirectory: String = ApplicationConfigArguments.General.debugDirectory,
       fanout: Int = ApplicationConfigArguments.PeakPairs.fanout,
       greenLevel: Int = ApplicationConfigArguments.Matching.greenLevel,
       indexerGlob: String = "",
@@ -91,12 +93,17 @@ object Settings {
   )
 
   val argumentsParser = new scopt.OptionParser[CliArguments]("") {
-    head("findsong", "1.0.1")
+    head("findsong", "1.0.6")
 
     opt[Unit]("debug")
       .action((debug, cliArguments) => cliArguments.copy(debug = true))
       .text(
         s"Create intermediate dump files during song fingerprinting and matching (default = ${ApplicationConfigArguments.General.debug})")
+
+    opt[Unit]("debugDirectory")
+      .action((debug, cliArguments) => cliArguments.copy(debug = true))
+      .text(
+        s"Directory for the dump files that are created when using --debug (default = ${ApplicationConfigArguments.General.debugDirectory})")
 
     opt[Int]("fanout")
       .action((fanout, cliArguments) => cliArguments.copy(fanout = fanout))
@@ -224,6 +231,7 @@ class Settings(arguments: Settings.CliArguments) {
 
   object General {
     val debug = arguments.debug
+    val debugDirectory = arguments.debugDirectory
     val indexerGlob = arguments.indexerGlob
     val matcherGlob = arguments.matcherGlob
   }
