@@ -52,4 +52,4 @@ cp -r workspace/scala/findsong/analyses/data/indexes/recognition_rate workspace/
 python workspace/scala/findsong/analyses/scripts/add_audio_filters.py --audiofilternames highpass lowpass rubberband rubberband rubberband rubberband chorus aecho flanger aphaser --audiofilterparameters "f=440" "f=440" "-p 5" "-p -5" "-t 1.05" "-t 0.95" "0.7:0.9:55:0.4:0.25:2" "0.8:0.8:1000:0.8" "delay=20:depth=5:regen=10:speed=2" "delay=5.0:speed=2.0" --inputfilesglob "workspace/scala/findsong/analyses/data/clips/audio_filters/clean/*.mp3" --outputdirectorypath workspace/scala/findsong/analyses/data/clips/audio_filters
 
 # Plots
-python analyses/scripts/plots/generate_blog_plots.py --digitizationplotfilename analyses/data/plots/digitisation.png  --fftplotfilename analyses/data/plots/fft.png
+python analyses/scripts/plots/generate_blog_plots.py --digitizationplotfilename analyses/data/plots/digitisation.png  --fftplotfilename analyses/data/plots/fft.png --indexerwalkthroughplotfilename analyses/data/plots/indexer_walkthrough.png --matcherwalkthroughplotfilename analyses/data/plots/matcher_walkthrough.png
