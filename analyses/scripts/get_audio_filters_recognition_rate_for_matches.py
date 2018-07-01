@@ -28,6 +28,10 @@ def main():
         type=str)
     args = parser.parse_args()
 
+    if not path.exists(args.matchesfilepath):
+        print(f"Error: {args.matchesfilepath} does not exist")
+        sys.exit(1)
+
     if path.exists(args.recognitionrateformatchesfilepath):
         print(
             f"Error: {args.recognitionrateformatchesfilepath} already exists")
@@ -43,7 +47,7 @@ def main():
                 args.wrongresultsformatchesfilepath,
                 "w") as wrong_results_for_matches_file:
         path_regex = (r"workspace/scala/findsong/analyses/data/clips/" +
-                      r"audio_filters/(.*)")
+                      r"audio_filters/(.*)/(.*)")
         metadata_artist_title_regex = (
             r"^format\|tag:artist=(.*)\|" + r"tag:title=(.*)$")
         metadata_title_artist_regex = (
@@ -62,7 +66,6 @@ def main():
              clip_score3, _, clip_title_artist3) = (match_info_list)
             clip_path_match = re.search(path_regex, clip_filename)
             path_suffix = clip_path_match.group(1)
-
             metadata = subprocess.run(
                 [
                     "ffprobe", "-show_entries", "format_tags=artist,title",
@@ -94,13 +97,12 @@ def main():
                         n_matches_by_path_suffix.get(path_suffix, 0) + 1)
                 else:
                     wrong_results_by_path_suffix[path_suffix] = (
-                        wrong_results_by_path_suffix[path_suffix].get(
-                            path_suffix,
-                            []) + [metadata_title + " - " + metadata_artist])
+                        wrong_results_by_path_suffix.get(path_suffix, []) +
+                        [metadata_title + " - " + metadata_artist])
 
-        for (path_suffix, n_matches) in n_matches_by_path_suffix:
+        for (path_suffix, n_matches) in n_matches_by_path_suffix.items():
             print(
-                " ".join(path_suffix, str(n_matches)),
+                " ".join([path_suffix, str(n_matches)]),
                 file=recrate_for_matches_file)
 
         path_suffix_wrong_results_list = []

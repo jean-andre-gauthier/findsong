@@ -60,8 +60,12 @@ def main():
                 intermediary_filename_in = path.join(
                     output_directory,
                     input_filename_without_extension + ".in.wav")
+                metadata_filename = path.join(
+                    output_directory,
+                    input_filename_without_extension + ".txt")
                 ffmpeg_command_in = [
-                    "ffmpeg", "-i", input_filename, intermediary_filename_in
+                    "ffmpeg", "-i", input_filename, "-f", "ffmetadata",
+                    metadata_filename, intermediary_filename_in
                 ]
                 ffmpeg_process_in = subprocess.run(
                     ffmpeg_command_in, stdout=subprocess.PIPE)
@@ -81,13 +85,15 @@ def main():
                 rubberband_process = subprocess.run(
                     rubberband_command, stdout=subprocess.PIPE)
                 if rubberband_process.returncode != 0:
-                    print(f"Error: ffmpeg returned" +
+                    print(f"Error: rubberband returned" +
                           f" {rubberband_process.returncode} for" +
                           f" {rubberband_command}")
                     exit(1)
 
                 ffmpeg_command_out = [
-                    "ffmpeg", "-i", intermediary_filename_out, output_filename
+                    "ffmpeg", "-i", intermediary_filename_out, "-f",
+                    "ffmetadata", "-i", metadata_filename, "-map_metadata",
+                    "1", output_filename
                 ]
                 ffmpeg_process_out = subprocess.run(
                     ffmpeg_command_out, stdout=subprocess.PIPE)
