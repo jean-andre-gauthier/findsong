@@ -53,4 +53,5 @@ python workspace/scala/findsong/analyses/scripts/add_audio_filters.py --audiofil
 
 # Plots
 python analyses/scripts/plots/generate_performance_plot.py --inputfilepath analyses/data/performance/performance_by_index_size --outputplotindexerpath analyses/data/plots/indexer_performance.png --outputplotmatchespath analyses/data/plots/matcher_performance.png
+python analyses/scripts/plots/generate_recognition_rate_plot.py --inputfilepath analyses/data/recognition_rate/recognition_rate_for_matches --outputplotpath analyses/data/plots/recognition_rate.png
 python analyses/scripts/plots/generate_blog_plots.py --digitizationplotfilename analyses/data/plots/digitisation.png  --fftplotfilename analyses/data/plots/fft.png --indexerwalkthroughplotfilename analyses/data/plots/indexer_walkthrough.png --matcherwalkthroughplotfilename analyses/data/plots/matcher_walkthrough.png
