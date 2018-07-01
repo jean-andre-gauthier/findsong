@@ -7,6 +7,7 @@ import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
+from os import path
 
 
 def main():
@@ -28,6 +29,18 @@ def main():
         type=str)
     args = parser.parse_args()
 
+    if not path.exists(args.inputfilepath):
+        print(f"Error: {args.inputfilepath} does not exist")
+        exit(1)
+
+    if path.exists(args.outputplotindexerpath):
+        print(f"Error: {args.outputplotindexerpath} already exists")
+        exit(1)
+
+    if path.exists(args.outputplotmatchespath):
+        print(f"Error: {args.outputplotmatchespath} already exists")
+        exit(1)
+
     with open(args.inputfilepath) as input_file:
         input_file_contents = list(
             map(lambda line: line.strip().split(" "), input_file.readlines()))
@@ -43,11 +56,12 @@ def main():
         make_plot(plt_index_sizes, "Index size (# songs)",
                   plt_index_fingerprints, "# Fingerprints",
                   plt_indexer_durations, "Indexer duration (ms)",
-                  args.outputplotindexerpath)
+                  "Indexer Performance", args.outputplotindexerpath)
         make_plot(plt_index_sizes, "Index size (# songs)",
                   plt_index_fingerprints, "# Fingerprints",
                   plt_matcher_durations_averages,
-                  "Matcher average duration (ms)", args.outputplotmatchespath)
+                  "Matcher average duration (ms)", "Matcher Performance",
+                  args.outputplotmatchespath)
 
 
 def align_yaxis(ax1, v1, ax2, v2):
@@ -71,7 +85,7 @@ def adjust_yaxis(ax, ydif, v):
     ax.set_ylim(nminy + v, nmaxy + v)
 
 
-def make_plot(xs, xs_label, ys1, ys_label1, ys2, ys_label2, file_name):
+def make_plot(xs, xs_label, ys1, ys_label1, ys2, ys_label2, title, file_name):
     figure, axis1 = plt.subplots()
     axis1.set_xlabel(xs_label)
     axis1.set_ylabel(ys_label1, color="red")
@@ -87,7 +101,8 @@ def make_plot(xs, xs_label, ys1, ys_label1, ys2, ys_label2, file_name):
 
     align_yaxis(axis1, 2700, axis2, 5000)
 
-    figure.tight_layout()
+    figure.tight_layout(pad=3.0, w_pad=3.0, h_pad=3.0)
+    figure.suptitle(title, fontsize=12, y=0.05)
     plt.legend(handles=[handle1, handle2], loc=1)
 
     plt.savefig(file_name, transparent=True)
