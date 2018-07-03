@@ -53,6 +53,7 @@ def main():
         metadata_title_artist_regex = (
             r"^format\|tag:title=(.*)\|" + "tag:artist=(.*)$")
         n_matches_by_path_suffix = {}
+        score_by_path_suffix = {}
         wrong_results_by_path_suffix = {}
 
         for match_info in matches_file.readlines():
@@ -95,6 +96,9 @@ def main():
                         metadata_artist == clip_title_artist1):
                     n_matches_by_path_suffix[path_suffix] = (
                         n_matches_by_path_suffix.get(path_suffix, 0) + 1)
+                    score_by_path_suffix[path_suffix] = (
+                        score_by_path_suffix.get(path_suffix,
+                                                 0) + int(clip_score1))
                 else:
                     wrong_results_by_path_suffix[path_suffix] = (
                         wrong_results_by_path_suffix.get(path_suffix, []) +
@@ -102,7 +106,11 @@ def main():
 
         for (path_suffix, n_matches) in n_matches_by_path_suffix.items():
             print(
-                " ".join([path_suffix, str(n_matches)]),
+                " ".join([
+                    path_suffix,
+                    str(n_matches),
+                    str(score_by_path_suffix[path_suffix])
+                ]),
                 file=recrate_for_matches_file)
 
         path_suffix_wrong_results_list = []

@@ -28,8 +28,9 @@ def main():
         type=str)
     args = parser.parse_args()
 
-    if path.exists(args.recrateformatchesfilepath):
-        print(f"Error: {args.recrateformatchesfilepath} already exists")
+    if path.exists(args.recognitionrateformatchesfilepath):
+        print(
+            f"Error: {args.recognitionrateformatchesfilepath} already exists")
         sys.exit(1)
 
     if path.exists(args.wrongresultsformatchesfilepath):
@@ -37,8 +38,8 @@ def main():
         sys.exit(1)
 
     with open(args.matchesfilepath) as matches_file, open(
-            args.recrateformatchesfilepath,
-            "w") as recrate_for_matches_file, open(
+            args.recognitionrateformatchesfilepath,
+            "w") as recognition_rate_for_matches_file, open(
                 args.wrongresultsformatchesfilepath,
                 "w") as wrong_results_for_matches_file:
         length_noise_regex = r"/noise/(\d*)/length/(\d*)/"
@@ -116,7 +117,7 @@ def main():
         for length_noise_n_matches in length_noise_n_matches_list:
             print(
                 " ".join(str(entry) for entry in length_noise_n_matches),
-                file=recrate_for_matches_file)
+                file=recognition_rate_for_matches_file)
 
         length_noise_wrong_results_list = []
         for (length, wrong_results_by_noise

@@ -2,11 +2,9 @@
 Generates miscellaneous plots used in the blog post
 """
 from argparse import ArgumentParser
-from os import path
 import matplotlib
 matplotlib.use('TkAgg')
-from matplotlib import collections as mc, colors, pyplot as plt, rc
-import matplotlib.pyplot as plt
+from matplotlib import collections as mc, colors, pyplot as plt
 import numpy as np
 
 
@@ -181,11 +179,11 @@ def create_indexer_walkthrough_plot(indexer_walkthrough_filename):
                            min_peaks_x, max_peaks_x, min_peaks_y, max_peaks_y)
 
     # Plot song index
-    colLabels = np.array(["f1", "f2", "t2-t1", "[(t1, Song), ...]"])
-    cellText = np.array([[3, 3, 2, "[(0, Song 1), (1, Song 1)]"],
-                         [3, 3, 3,
-                          "[(1, Song 1)]"], [3, 4, 4, "[(3, Song 1)]"]])
-    create_table_plot(axes[4], cellText, colLabels, "Song Index", 2)
+    col_labels = np.array(["f1", "f2", "t2-t1", "[(t1, Song), ...]"])
+    cell_text = np.array([[3, 3, 2, "[(0, Song 1), (1, Song 1)]"],
+                          [3, 3, 3,
+                           "[(1, Song 1)]"], [3, 4, 4, "[(3, Song 1)]"]])
+    create_table_plot(axes[4], cell_text, col_labels, "Song Index", 2)
 
     plt.savefig(indexer_walkthrough_filename, transparent=True)
 
@@ -205,11 +203,11 @@ def create_matcher_walkthrough_plot(matcher_walkthrough_filename):
     plt.tight_layout(pad=3.0, w_pad=3.0, h_pad=4.0)
 
     # Plot song index
-    colLabels = np.array(["f1", "f2", "t2-t1", "[(t1, Song), ...]"])
-    cellText = np.array([[3, 3, 2, "[(0, Song 1), (0, Song 2), (1, Song 1)]"],
-                         [3, 3, 3, "[(1, Song 1)]"],
-                         [3, 4, 4, "[(2, Song 2), (3, Song 1)]"]])
-    create_table_plot(axes[0], cellText, colLabels, "Song Index", 1.5)
+    col_labels = np.array(["f1", "f2", "t2-t1", "[(t1, Song), ...]"])
+    cell_text = np.array([[3, 3, 2, "[(0, Song 1), (0, Song 2), (1, Song 1)]"],
+                          [3, 3, 3, "[(1, Song 1)]"],
+                          [3, 4, 4, "[(2, Song 2), (3, Song 1)]"]])
+    create_table_plot(axes[0], cell_text, col_labels, "Song Index", 1.5)
 
     # Plot signal
     time = np.arange(40)
@@ -248,14 +246,14 @@ def create_matcher_walkthrough_plot(matcher_walkthrough_filename):
                            min_peaks_x, max_peaks_x, min_peaks_y, max_peaks_y)
 
     # Plot song offsets
-    colLabels = np.array(["Song", "[Offset, ...]"])
-    cellText = np.array([["Song 1", "[0, 1, 0, 0]"], ["Song 2", "0"]])
-    create_table_plot(axes[5], cellText, colLabels, "Song Offsets", 1.75)
+    col_labels = np.array(["Song", "[Offset, ...]"])
+    cell_text = np.array([["Song 1", "[0, 1, 0, 0]"], ["Song 2", "0"]])
+    create_table_plot(axes[5], cell_text, col_labels, "Song Offsets", 1.75)
 
     # Plot song matches
-    colLabels = np.array(["Song", "Confidence"])
-    cellText = np.array([["Song 1", "9.967"], ["Song 2", "3.332"]])
-    create_table_plot(axes[6], cellText, colLabels, "Song Confidence", 1.75)
+    col_labels = np.array(["Song", "Confidence"])
+    cell_text = np.array([["Song 1", "9.967"], ["Song 2", "3.332"]])
+    create_table_plot(axes[6], cell_text, col_labels, "Song Confidence", 1.75)
 
     plt.savefig(matcher_walkthrough_filename, transparent=True)
 
@@ -296,13 +294,13 @@ def create_spectrogram_plot(axis, spectrogram):
         norm=normalize)
 
 
-def create_table_plot(axis, cellText, colLabels, title, vscale):
+def create_table_plot(axis, cell_text, col_labels, title, vscale):
     axis.xaxis.set_visible(False)
     axis.yaxis.set_visible(False)
     axis.set_title(title, fontsize=10)
     table = axis.table(
-        cellText=cellText,
-        colLabels=colLabels,
+        cellText=cell_text,
+        colLabels=col_labels,
         alpha=0.0,
         bbox=None,
         colLoc="center",

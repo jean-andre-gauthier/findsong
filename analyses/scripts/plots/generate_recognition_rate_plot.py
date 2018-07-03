@@ -3,12 +3,11 @@ Generates a plot for recognition rate analyses
 """
 
 from argparse import ArgumentParser
+from os import path
 import matplotlib
 matplotlib.use('TkAgg')
 from itertools import groupby
 import matplotlib.pyplot as plt
-import numpy as np
-from os import path
 
 
 def main():
@@ -49,11 +48,10 @@ def main():
             legends.append("Clip Length = " + str(clip_length))
             ysi = list(
                 map(
-                    lambda clip_length_noise_recognition_rate: clip_length_noise_recognition_rate[2],
+                    lambda length_recrate: length_recrate[2],
                     sorted(
                         ys,
-                        key=
-                        lambda clip_length_noise_recognition_rate: int(clip_length_noise_recognition_rate[1]),
+                        key=lambda length_recrate: int(length_recrate[1]),
                     )))
             plt.plot(xs, ysi)
 

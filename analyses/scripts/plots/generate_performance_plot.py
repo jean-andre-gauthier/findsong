@@ -3,11 +3,11 @@ Generates a plot for performance analyses
 """
 
 from argparse import ArgumentParser
+from os import path
 import matplotlib
 matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
-from os import path
 
 
 def main():
