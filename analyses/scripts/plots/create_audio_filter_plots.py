@@ -1,7 +1,7 @@
 """
 Generates a plot for audio filter analyses
 
-Hardcoded values are taken from analyses/data/audio_filters/recognition_rate_for_matches
+WARNING: contains hardcoded values (taken from analyses/data/audio_filters/recognition_rate_for_matches)
 """
 
 from argparse import ArgumentParser
@@ -117,8 +117,6 @@ def create_plot(xs, xs_label, ys1, ys_label1, ys2, ys_label2, title, file_name):
     axis2.set_ylabel(ys_label2, color="blue")
     axis2.tick_params(axis='y', labelcolor="blue")
     handle2, = plt.plot(xs, ys2, "b--", label=ys_label2)
-
-    #  align_yaxis(axis1, 2700, axis2, 5000)
 
     figure.tight_layout(pad=3.0, w_pad=3.0, h_pad=3.0)
     figure.suptitle(title, fontsize=12, y=0.05)
