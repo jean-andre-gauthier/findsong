@@ -56,6 +56,8 @@ python workspace/scala/findsong/analyses/scripts/get_audio_filters_recognition_r
 # Parameters
 cp -r workspace/scala/findsong/analyses/data/clips/recognition_rate/noise/0/length/10 workspace/scala/findsong/analyses/data/clips/findsong_parameters/
 cp -r workspace/scala/findsong/analyses/data/indexes/recognition_rate workspace/scala/findsong/analyses/data/indexes/findsong_parameters
+python workspace/scala/findsong/analyses/scripts/get_parameters_matches_for_globs.py --clipsglob "workspace/scala/findsong/analyses/data/clips/findsong_parameters/*.mp3" --findsongjarpath workspace/scala/findsong/bin/findsong-assembly-1.0.6.jar --parameterlist "--fanout=1 2 4 8 16" "--peakDeltaF=1 5 10 20 50 100" "--peakDeltaT=1 5 10 20 50 100" "--peaksPerChunk=1 2 4 8 16 32" "--windowDeltaF=1 5 10 20 50 100" "--windowDeltaT=10 20 50 100 200 500" "--windowDeltaTi=1 5 10 15 20 25 30"  --outputdirectorypath workspace/scala/findsong/analyses/data/findsong_parameters  --songsglob "workspace/scala/findsong/analyses/data/indexes/findsong_parameters/*.mp3"
+python workspace/scala/findsong/analyses/scripts/get_parameters_recognition_rate_for_matches.py --matchesdirectorypath workspace/scala/findsong/analyses/data/findsong_parameters/ --recognitionrateformatchesfilepath workspace/scala/findsong/analyses/data/findsong_parameters/recognition_rate_for_matches
 
 # Plots
 python analyses/scripts/plots/generate_performance_plot.py --inputfilepath analyses/data/performance/performance_by_index_size --outputplotindexerpath analyses/data/plots/indexer_performance.png --outputplotmatchespath analyses/data/plots/matcher_performance.png
