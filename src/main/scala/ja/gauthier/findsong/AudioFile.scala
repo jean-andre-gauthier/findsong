@@ -67,7 +67,10 @@ object AudioFile {
     val signalBytes = IOUtils
       .toByteArray(new FileInputStream(fileOut))
     val signalShorts = byteArrayToShortArray(signalBytes)
-    signalShorts
+    val signalShortsWithoutHeader = signalShorts.slice(
+      settings.Preprocessing.intermediateFormatHeaderSize,
+      signalShorts.length)
+    signalShortsWithoutHeader
   }
 
   /**

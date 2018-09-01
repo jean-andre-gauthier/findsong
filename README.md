@@ -8,7 +8,7 @@ A proof of concept for a song search engine. Once the engine has indexed the aud
 ## Installation
 
 1. Install [ffmpeg](https://ffmpeg.org/download.html) (minimal required version: ffmpeg 2.8.14)
-2. Download the findsong [binary](https://github.com/jean-andre-gauthier/findsong/raw/master/bin/findsong-assembly-1.0.6.jar)
+2. Download the findsong [binary](https://github.com/jean-andre-gauthier/findsong/raw/master/bin/findsong-assembly-1.0.7.jar)
 3. Run the binary with java (minimal required version: Java SE 8)
 
 ## Basic usage

@@ -49,6 +49,7 @@ object Settings {
       val channels = 1
       val codec = "pcm_s16le"
       val intermediateFormat = "wav"
+      val intermediateFormatHeaderSize = 44
       val sampleRate = preprocessing.getInt("sample-rate")
       val signed = true
     }
@@ -256,6 +257,7 @@ class Settings(arguments: Settings.CliArguments) {
     val channels = 1
     val codec = "pcm_s16le"
     val intermediateFormat = "wav"
+    val intermediateFormatHeaderSize = 44
     val sampleRate = arguments.sampleRate
     val signed = true
   }
