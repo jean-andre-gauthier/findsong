@@ -115,11 +115,11 @@ def create_fft_plot(fft_plot_filename):
     axes[0].stem(time, signal, "r", basefmt=" ", markerfmt=" ")
 
     # Plot FFT abs
-    axes[1].set_title("FFT (frequency domain - abs)", fontsize=10)
+    axes[1].set_title("FFT (frequency domain - magnitude)", fontsize=10)
     axes[1].stem(frequency, fft_abs, "r", basefmt=" ", markerfmt=" ")
 
     # Plot FFT angle
-    axes[2].set_title("FFT (frequency domain - angle)", fontsize=10)
+    axes[2].set_title("FFT (frequency domain - phase)", fontsize=10)
     axes[2].stem(frequency, fft_angle, "r", basefmt=" ", markerfmt=" ")
 
     plt.savefig(fft_plot_filename, transparent=True)
