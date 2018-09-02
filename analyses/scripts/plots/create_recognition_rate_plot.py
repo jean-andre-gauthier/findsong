@@ -5,7 +5,7 @@ Generates a plot for recognition rate analyses
 from argparse import ArgumentParser
 from os import path
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use("Agg")
 from itertools import groupby
 import matplotlib.pyplot as plt
 

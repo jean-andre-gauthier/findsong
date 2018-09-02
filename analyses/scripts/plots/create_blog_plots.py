@@ -3,7 +3,7 @@ Generates miscellaneous plots used in the blog post
 """
 from argparse import ArgumentParser
 import matplotlib
-matplotlib.use('TkAgg')
+matplotlib.use("Agg")
 from matplotlib import collections as mc, colors, pyplot as plt
 import numpy as np
 
